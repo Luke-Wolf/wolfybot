@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7EB3DD3D-C981-48A2-BAE1-BECD80A2B31E}</ProjectGuid>
+    <ProjectGuid>{BBBFBD73-CFEC-458D-AF7B-A3283B28000F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>WolfBot.Tests</RootNamespace>
-    <AssemblyName>WolfBot.Tests</AssemblyName>
+    <RootNamespace>WolfyBot.BotCommands</RootNamespace>
+    <AssemblyName>WolfyBot.BotCommands</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -29,28 +29,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Test.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\WolfyBot.Core\WolfyBot.Core.csproj">
       <Project>{DBEFEE3B-0172-4EAA-BA91-D4AC67A9AEB7}</Project>
       <Name>WolfyBot.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WolfyBot.BotCommands\WolfyBot.BotCommands.csproj">
-      <Project>{BBBFBD73-CFEC-458D-AF7B-A3283B28000F}</Project>
-      <Name>WolfyBot.BotCommands</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WolfyBot.CLI\WolfyBot.CLI.csproj">
-      <Project>{00A0D05C-F9AC-4B6F-AA65-20B795771A4D}</Project>
-      <Name>WolfyBot.CLI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WolfyBot.Config\WolfyBot.Config.csproj">
-      <Project>{AB923C5B-C8FB-468C-966E-E6BCBD8210F9}</Project>
-      <Name>WolfyBot.Config</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
