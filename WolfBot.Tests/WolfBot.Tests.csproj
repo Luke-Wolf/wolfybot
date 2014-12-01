@@ -35,4 +35,10 @@
     <Compile Include="Test.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\WolfyBot.Core\WolfyBot.Core.csproj">
+      <Project>{DBEFEE3B-0172-4EAA-BA91-D4AC67A9AEB7}</Project>
+      <Name>WolfyBot.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
