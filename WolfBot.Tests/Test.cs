@@ -21,9 +21,23 @@ namespace WolfBot.Tests
 	public class Test
 	{
 		[Test ()]
-		public void TestCase ()
+		public void IRCMessageParsing ()
 		{
+			//TODO: Implement IRC Message Parsing Test
 		}
+
+		[Test ()]
+		public void IRCMessageToLogFormat ()
+		{
+			//TODO: Implement IRC to Log Format Test
+		}
+
+		[Test ()]
+		public void IRCMessageBackToIRCFormat ()
+		{
+			//TODO: Implement IRC to IRC Message to IRC Roundtrip Test
+		}
+
 	}
 }
 

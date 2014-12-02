@@ -34,10 +34,10 @@ namespace WolfyBot.Core
 		public IRCMessage (IRCMessage other)
 		{
 			TimeStamp = other.TimeStamp;
-			Prefix = new String (other.Prefix);
-			Command = new String (other.Command);
-			Parameters = new String (other.Parameters);
-			TrailingParameters = new String (other.TrailingParameters);
+			Prefix = other.Prefix;
+			Command = other.Command;
+			Parameters = other.Parameters;
+			TrailingParameters = other.TrailingParameters;
 		}
 
 		#endregion
@@ -47,11 +47,14 @@ namespace WolfyBot.Core
 		public String ToIRCString ()
 		{
 			//TODO: Implement Serialization to IRC Protocol
+			return "";
 		}
 
 		public String ToLogString ()
 		{
+
 			//TODO: Implement Serialization to logging format
+			return "";
 		}
 
 		#endregion
