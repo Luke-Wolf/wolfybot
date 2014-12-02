@@ -1,0 +1,36 @@
+﻿WolfyBot.BotCommands
+-------------
+Create your own directory inside of the BotCommands Folder
+and develop individual commands inside of those
+
+Commands are exposed through a list of strings and it is
+recommended that you treat the options you present as a
+state machine for scripts that require multi-step user
+input such as games.
+-------------
+
+WolfyBot.CLI
+-------------
+A Listener program that connects to a configured
+IRC Server. Maybe Add some command line switches 
+in later for now hardcode in default config locations
+and such
+-------------
+
+WolfyBot.Core
+-------------
+Contain the classes for the IRC Server, Bot,
+and command interface, and command subclasses
+
+Server and Bot will communicate through events
+-------------
+
+WolfyBot.Config
+-------------
+Configurator object that returns a configured IRC
+Server and bot, based upon a text configuration file.
+-------------
+
+General Notes
+-------------
+-------------
