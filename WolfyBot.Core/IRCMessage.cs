@@ -102,6 +102,7 @@ namespace WolfyBot.Core
 
 		#region Properties
 
+		//IRC Message Properties
 		public String Prefix {
 			get;
 			set;
@@ -122,17 +123,19 @@ namespace WolfyBot.Core
 			set;
 		}
 
-		public DateTime TimeStamp {
-			get;
-			set;
-		}
-
+		//Utility Properties
 		public String Channel {
 			get;
 			set;
 		}
 
 		public String Sender {
+			get;
+			set;
+		}
+
+		//Logging Properties
+		public DateTime TimeStamp {
 			get;
 			set;
 		}
