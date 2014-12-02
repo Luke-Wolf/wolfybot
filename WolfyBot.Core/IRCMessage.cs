@@ -18,9 +18,72 @@ namespace WolfyBot.Core
 {
 	public class IRCMessage
 	{
-		public IRCMessage ()
+		#region Constructors
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WolfyBot.Core.IRCMessage"/> class.
+		/// </summary>
+		/// <param name="ircMessage">A Message formatted in the IRC Protocol</param>
+		public IRCMessage (String ircMessage)
 		{
+			TimeStamp = DateTime.Now;
+			//TODO: write IRC Parser
 		}
+
+		//Copy Constructor
+		public IRCMessage (IRCMessage other)
+		{
+			TimeStamp = other.TimeStamp;
+			Prefix = new String (other.Prefix);
+			Command = new String (other.Command);
+			Parameters = new String (other.Parameters);
+			TrailingParameters = new String (other.TrailingParameters);
+		}
+
+		#endregion
+
+		#region Methods
+
+		public String ToIRCString ()
+		{
+			//TODO: Implement Serialization to IRC Protocol
+		}
+
+		public String ToLogString ()
+		{
+			//TODO: Implement Serialization to logging format
+		}
+
+		#endregion
+
+		#region Properties
+
+		public String Prefix {
+			get;
+			set;
+		}
+
+		public String Command {
+			get;
+			set;
+		}
+
+		public String Parameters {
+			get;
+			set;
+		}
+
+		public String TrailingParameters {
+			get;
+			set;
+		}
+
+		public DateTime TimeStamp {
+			get;
+			set;
+		}
+
+		#endregion
 	}
 }
 
