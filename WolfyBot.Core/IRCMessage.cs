@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting;
 
 namespace WolfyBot.Core
 {
@@ -37,6 +36,7 @@ namespace WolfyBot.Core
 			if (ircMessage.StartsWith (":", StringComparison.Ordinal)) {
 				prefixEnd = ircMessage.IndexOf (" ", StringComparison.Ordinal);
 				Prefix = ircMessage.Substring (1, prefixEnd - 1);
+				Sender = Prefix.Split ('!') [0];
 			}
 
 			//Get the Trailing Parameters if they exist as a string literal
@@ -128,6 +128,11 @@ namespace WolfyBot.Core
 		}
 
 		public String Channel {
+			get;
+			set;
+		}
+
+		public String Sender {
 			get;
 			set;
 		}
