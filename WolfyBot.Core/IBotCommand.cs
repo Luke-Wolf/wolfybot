@@ -13,11 +13,31 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 using System;
+using System.Collections.Generic;
 
 namespace WolfyBot.Core
 {
 	public interface IBotCommand
 	{
+		/// <summary>
+		/// Called by the Bot on the command.
+		/// The full IRC message is passed in. If
+		/// you desire to return a message to the server
+		/// raise an event
+		/// </summary>
+		void Execute (IRCMessage message);
+
+		/// <summary>
+		/// The list of command words that the controller is
+		/// listening for the execute the command. For complex
+		/// multi-step scripts, change the backing variable of the
+		/// property to point to a different list of strings to listen
+		/// for. It is recommended to set up a state machine to handle this.
+		/// </summary>
+		/// <value>The command words.</value>
+		List<String> CommandWords {
+			get;
+		}
 	}
 }
 
