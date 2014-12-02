@@ -82,20 +82,32 @@ namespace WolfyBot.Core
 
 		public String ToIRCString ()
 		{
+			var param = String.Empty;
+			foreach (String item in Parameters) {
+				param = String.Concat (new []{ param, item });
+			}
 			return String.Format (":{0} {1} {2} :{3}", Prefix,
-				Command, Parameters.ToString ().Replace (",", " "), TrailingParameters);
+				Command, param, TrailingParameters);
 		}
 
 		public String ToLogString ()
 		{
-			return String.Format ("{0} {1} {2} {3} {4}", TimeStamp, Prefix,
-				Command, Parameters.ToString ().Replace (",", " "), TrailingParameters);
+			var param = String.Empty;
+			foreach (String item in Parameters) {
+				param = String.Concat (new []{ param, item });
+			}
+			return String.Format ("{0} :{1} {2} {3} :{4}", TimeStamp, Prefix,
+				Command, param, TrailingParameters);
 		}
 
-		public String ToString ()
+		public override String ToString ()
 		{
+			var param = String.Empty;
+			foreach (String item in Parameters) {
+				param = String.Concat (new []{ param, item });
+			}
 			return String.Format ("TimeStamp: {0}, IRC Message: ':{1} {2} {3} :{4}'",
-				TimeStamp, Prefix, Command, Parameters.ToString ().Replace (",", " "), TrailingParameters);
+				TimeStamp, Prefix, Command, param, TrailingParameters);
 		}
 
 		#endregion

@@ -14,6 +14,7 @@
 //    limitations under the License.
 using NUnit.Framework;
 using System;
+using WolfyBot.Core;
 
 namespace WolfBot.Tests
 {
@@ -23,19 +24,47 @@ namespace WolfBot.Tests
 		[Test ()]
 		public void IRCMessageParsing ()
 		{
-			//TODO: Implement IRC Message Parsing Test
+			string ircMsg = ":foo!bar@baz PRIVMSG #foo :Hello World";
+			var message = new IRCMessage (ircMsg);
+			//Test IRC Parsing
+			Assert.AreEqual ("foo!bar@baz", message.Prefix);
+			Assert.AreEqual ("PRIVMSG", message.Command);
+			Assert.AreEqual ("Hello World", message.TrailingParameters);
+
+			//Test Convenience Properties
+			Assert.AreEqual ("foo", message.Sender);
+			Assert.AreEqual ("#foo", message.Channel);
+
 		}
 
 		[Test ()]
 		public void IRCMessageToLogFormat ()
 		{
-			//TODO: Implement IRC to Log Format Test
+			string ircMsg = ":foo!bar@baz PRIVMSG #foo :Hello World";
+			var testTime = DateTime.Now;
+			var message = new IRCMessage (ircMsg);
+
+			var testString = String.Format ("{0} :foo!bar@baz PRIVMSG #foo :Hello World", testTime);
+			Assert.AreEqual (testString, message.ToLogString ());
 		}
 
 		[Test ()]
 		public void IRCMessageBackToIRCFormat ()
 		{
-			//TODO: Implement IRC to IRC Message to IRC Roundtrip Test
+			string ircMsg = ":foo!bar@baz PRIVMSG #foo :Hello World";
+			var message = new IRCMessage (ircMsg);
+			Assert.AreEqual (ircMsg, message.ToIRCString ());
+		}
+
+		[Test ()]
+		public void IRCMessageToString ()
+		{
+			string ircMsg = ":foo!bar@baz PRIVMSG #foo :Hello World";
+			var testTime = DateTime.Now;
+			var message = new IRCMessage (ircMsg);
+
+			var testString = String.Format ("TimeStamp: {0}, IRC Message: ':foo!bar@baz PRIVMSG #foo :Hello World'", testTime);
+			Assert.AreEqual (testString, message.ToString ());
 		}
 
 	}
