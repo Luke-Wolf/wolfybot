@@ -36,7 +36,6 @@ namespace WolfyBot.Core
 			if (ircMessage.StartsWith (":", StringComparison.Ordinal)) {
 				prefixEnd = ircMessage.IndexOf (" ", StringComparison.Ordinal);
 				Prefix = ircMessage.Substring (1, prefixEnd - 1);
-				Sender = Prefix.Split ('!') [0];
 			}
 
 			//Get the Trailing Parameters if they exist as a string literal
@@ -56,13 +55,7 @@ namespace WolfyBot.Core
 			Command = commandAndParameters [0];
 			if (commandAndParameters.Length > 1) {
 				Parameters = commandAndParameters.Skip (1).ToList ();
-				//If Parameters contains a channel pull it out
-				foreach (var item in Parameters) {
-					if (item.Contains ("#")) {
-						Channel = item;
-						break;
-					}
-				}
+
 			}
 		}
 
@@ -73,7 +66,6 @@ namespace WolfyBot.Core
 			Prefix = String.Copy (other.Prefix);
 			Command = String.Copy (other.Command);
 			Parameters = new List<String> (other.Parameters);
-			Channel = String.Copy (other.Channel);
 		}
 
 		#endregion
@@ -137,13 +129,25 @@ namespace WolfyBot.Core
 
 		//Utility Properties
 		public String Channel {
-			get;
-			set;
+			get {
+				if (Parameters.Count > 0) {
+					foreach (var item in Parameters) {
+						if (item.Contains ("#")) {
+							return item;
+						}
+					}
+				}
+				return String.Empty;
+			}
 		}
 
 		public String Sender {
-			get;
-			set;
+			get {
+				if (Prefix.Length > 0) {
+					return Prefix.Split ('!') [0];
+				}
+				return String.Empty;
+			}
 		}
 
 		//Logging Properties
