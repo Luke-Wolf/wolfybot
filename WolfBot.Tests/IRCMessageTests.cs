@@ -67,6 +67,30 @@ namespace WolfBot.Tests
 			Assert.AreEqual (testString, message.ToString ());
 		}
 
+		[Test ()]
+		public void IRCMessageFactoryTests ()
+		{
+			IRCMessage message = IRCMessageFactory.BuildActionMessage ("#foo", "bar");
+			Assert.AreEqual ("ACTION #foo :bar", message.ToIRCString ());
+			message = IRCMessageFactory.BuildJoinChannelMessage ("#foo");
+			Assert.AreEqual ("JOIN #foo", message.ToIRCString ());
+			message = IRCMessageFactory.BuildSetNickMessage ("foo");
+			Assert.AreEqual ("NICK foo", message.ToIRCString ());
+			message = IRCMessageFactory.BuildSendPassMessage ("foo");
+			Assert.AreEqual ("PASS foo", message.ToIRCString ());
+			message = IRCMessageFactory.BuildPingMessage ("foo.bar");
+			Assert.AreEqual ("PING foo.bar", message.ToIRCString ());
+			message = IRCMessageFactory.BuildPongMessage ("foo.bar");
+			Assert.AreEqual ("PONG foo.bar", message.ToIRCString ());
+			message = IRCMessageFactory.BuildSendChannelMessage ("#foo", "bar");
+			Assert.AreEqual ("PRIVMSG #foo :bar", message.ToIRCString ());
+			message = IRCMessageFactory.BuildQuitMessage ();
+			Assert.AreEqual ("QUIT", message.ToIRCString ());
+			message = IRCMessageFactory.BuildLeaveChannelMessage ("#foo");
+			Assert.AreEqual ("PART #foo", message.ToIRCString ());
+			message = IRCMessageFactory.BuildUserMessage ("foo", "foobar");
+			Assert.AreEqual ("USER foo 0 * :foobar", message.ToIRCString ());
+		}
 	}
 }
 

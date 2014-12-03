@@ -34,6 +34,11 @@ namespace WolfyBot.Core
 			return new IRCMessage (IRCCommand.NICK, nick);
 		}
 
+		public static IRCMessage BuildQuitMessage ()
+		{
+			return new IRCMessage (IRCCommand.QUIT);
+		}
+
 		public static IRCMessage BuildSendPassMessage (String password)
 		{
 			return new IRCMessage (IRCCommand.PASS, password);
@@ -54,9 +59,9 @@ namespace WolfyBot.Core
 			return new IRCMessage (IRCCommand.PRIVMSG, channel, message);
 		}
 
-		public static IRCMessage BuildQuitChannelMessage (String channel)
+		public static IRCMessage BuildLeaveChannelMessage (String channel)
 		{
-			return new IRCMessage (IRCCommand.QUIT, channel);
+			return new IRCMessage (IRCCommand.PART, channel);
 		}
 
 		public static IRCMessage BuildUserMessage (String name, String realName)

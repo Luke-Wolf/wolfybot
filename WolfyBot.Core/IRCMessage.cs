@@ -84,36 +84,50 @@ namespace WolfyBot.Core
 
 		public String ToIRCString ()
 		{
-			var param = String.Empty;
-			foreach (String item in Parameters) {
-				param = String.Concat (new []{ param, item });
-			}
+			String param = BuildParamString ();
 			if (msgtype == (int)IRCMessageType.RECEIVE) {
 				return String.Format (":{0} {1} {2} :{3}", Prefix,
 					Command, param, TrailingParameters);
 			} else {
-				return String.Format ("{0} {1} :{2}", Command, param, TrailingParameters);
+				if (TrailingParameters.Length > 0 && param.Length > 0)
+					return String.Format ("{0} {1} :{2}", Command, param, TrailingParameters);
+				else if (TrailingParameters.Length > 0 && param.Length == 0)
+					return String.Format ("{0} :{1}", Command, TrailingParameters);
+				else if (TrailingParameters.Length == 0 && param.Length > 0)
+					return String.Format ("{0} {1}", Command, param);
+				else
+					return Command;
+
 			}
 		}
 
 		public String ToLogString ()
 		{
-			var param = String.Empty;
-			foreach (String item in Parameters) {
-				param = String.Concat (new []{ param, item });
-			}
+			String param = BuildParamString ();
 			return String.Format ("{0} :{1} {2} {3} :{4}", TimeStamp, Prefix,
 				Command, param, TrailingParameters);
 		}
 
 		public override String ToString ()
 		{
-			var param = String.Empty;
-			foreach (String item in Parameters) {
-				param = String.Concat (new []{ param, item });
-			}
+			String param = BuildParamString ();
 			return String.Format ("TimeStamp: {0}, IRC Message: ':{1} {2} {3} :{4}'",
 				TimeStamp, Prefix, Command, param, TrailingParameters);
+		}
+
+		String BuildParamString ()
+		{
+			if (Parameters.Count == 1) {
+				return Parameters [0];
+			} else if (Parameters.Count == 0) {
+				return String.Empty;
+			}
+
+			var param = Parameters [0];
+			for (int i = 1; i < Parameters.Count; i++) {
+				param = String.Concat (new []{ param, " ", Parameters [i] });
+			}
+			return param;
 		}
 
 		#endregion
@@ -192,6 +206,7 @@ namespace WolfyBot.Core
 		JOIN,
 		NICK,
 		PASS,
+		PART,
 		PING,
 		PONG,
 		PRIVMSG,
