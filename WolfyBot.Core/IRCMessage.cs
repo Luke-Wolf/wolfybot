@@ -179,6 +179,15 @@ namespace WolfyBot.Core
 			}
 		}
 
+		public String Host {
+			get {
+				if (msgtype == (int)IRCMessageType.RECEIVE) {
+					return Prefix.Length > 0 ? Prefix.Split ('!') [1] : String.Empty;
+				}
+				return "LOCALHOST";
+			}
+		}
+
 		//Logging Properties
 		public DateTime TimeStamp {
 			get;

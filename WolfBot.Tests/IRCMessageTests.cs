@@ -33,6 +33,7 @@ namespace WolfBot.Tests
 
 			//Test Convenience Properties
 			Assert.AreEqual ("foo", message.Sender);
+			Assert.AreEqual ("bar@baz", message.Host);
 			Assert.AreEqual ("#foo", message.Channel);
 
 		}
