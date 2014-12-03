@@ -46,12 +46,12 @@ namespace WolfyBot.Core
 
 		public static IRCMessage BuildPingMessage (String target)
 		{
-			return new IRCMessage (IRCCommand.PING, target);
+			return new IRCMessage (IRCCommand.PING, trailingParameters: target);
 		}
 
 		public static IRCMessage BuildPongMessage (String server)
 		{
-			return new IRCMessage (IRCCommand.PONG, server);
+			return new IRCMessage (IRCCommand.PONG, trailingParameters: server);
 		}
 
 		public static IRCMessage BuildSendChannelMessage (String channel, String message)

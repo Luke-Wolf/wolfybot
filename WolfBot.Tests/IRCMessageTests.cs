@@ -80,9 +80,9 @@ namespace WolfBot.Tests
 			message = IRCMessageFactory.BuildSendPassMessage ("foo");
 			Assert.AreEqual ("PASS foo", message.ToIRCString ());
 			message = IRCMessageFactory.BuildPingMessage ("foo.bar");
-			Assert.AreEqual ("PING foo.bar", message.ToIRCString ());
+			Assert.AreEqual ("PING :foo.bar", message.ToIRCString ());
 			message = IRCMessageFactory.BuildPongMessage ("foo.bar");
-			Assert.AreEqual ("PONG foo.bar", message.ToIRCString ());
+			Assert.AreEqual ("PONG :foo.bar", message.ToIRCString ());
 			message = IRCMessageFactory.BuildSendChannelMessage ("#foo", "bar");
 			Assert.AreEqual ("PRIVMSG #foo :bar", message.ToIRCString ());
 			message = IRCMessageFactory.BuildQuitMessage ();
