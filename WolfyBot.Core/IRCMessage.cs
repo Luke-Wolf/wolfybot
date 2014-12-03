@@ -57,6 +57,15 @@ namespace WolfyBot.Core
 				Parameters = commandAndParameters.Skip (1).ToList ();
 
 			}
+			msgtype = IRCMessageType.RECEIVE;
+		}
+		public IRCMessage(IRCCommand command, String parameters = String.Empty, String trailingParameters = String.Empty)
+		{
+			msgtype = IRCMessageType.SEND;
+			Command = command.ToString ();
+			Parameters = parameters.Split (' ').ToList ();
+			TrailingParameters = trailingParameters;
+
 		}
 
 		//Copy Constructor
@@ -78,8 +87,12 @@ namespace WolfyBot.Core
 			foreach (String item in Parameters) {
 				param = String.Concat (new []{ param, item });
 			}
-			return String.Format (":{0} {1} {2} :{3}", Prefix,
-				Command, param, TrailingParameters);
+			if (msgtype = IRCMessageType.RECEIVE) {
+				return String.Format (":{0} {1} {2} :{3}", Prefix,
+					Command, param, TrailingParameters);
+			} else {
+				return String.Format ("{0} {1} :{2}", Command, param, TrailingParameters);
+			}
 		}
 
 		public String ToLogString ()
@@ -143,10 +156,11 @@ namespace WolfyBot.Core
 
 		public String Sender {
 			get {
-				if (Prefix.Length > 0) {
-					return Prefix.Split ('!') [0];
+				if (msgtype == IRCMessageType.RECEIVE) {
+					return Prefix.Length > 0 ? Prefix.Split ('!') [0] : String.Empty;
+				} else {
+					return "LOCALHOST"
 				}
-				return String.Empty;
 			}
 		}
 
@@ -157,6 +171,25 @@ namespace WolfyBot.Core
 		}
 
 		#endregion
+		#region private variables
+		IRCMessageType msgtype;
+		#endregion
+	}
+	enum IRCMessageType
+	{
+		SEND,
+		RECEIVE
+	}
+	enum IRCCommand{
+		ACTION,
+		JOIN,
+		NICK,
+		PASS,
+		PING,
+		PONG,
+		PRIVMSG,
+		USER,
+		QUIT
 	}
 }
 

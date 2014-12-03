@@ -44,6 +44,7 @@
     <Compile Include="IBotCommand.cs" />
     <Compile Include="IRCServer.cs" />
     <Compile Include="IRCMessage.cs" />
+    <Compile Include="IRCMessageFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
