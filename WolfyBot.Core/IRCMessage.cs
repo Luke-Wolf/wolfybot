@@ -57,7 +57,7 @@ namespace WolfyBot.Core
 				Parameters = commandAndParameters.Skip (1).ToList ();
 
 			}
-			msgtype = (int)IRCMessageType.RECEIVE;
+			msgtype = IRCMessageType.RECEIVE;
 		}
 
 		public IRCMessage (IRCCommand command, String parameters = "", String trailingParameters = "")
@@ -85,7 +85,7 @@ namespace WolfyBot.Core
 		public String ToIRCString ()
 		{
 			String param = BuildParamString ();
-			if (msgtype == (int)IRCMessageType.RECEIVE) {
+			if (msgtype == IRCMessageType.RECEIVE) {
 				return String.Format (":{0} {1} {2} :{3}", Prefix,
 					Command, param, TrailingParameters);
 			} else {
@@ -171,7 +171,7 @@ namespace WolfyBot.Core
 
 		public String Sender {
 			get {
-				if (msgtype == (int)IRCMessageType.RECEIVE) {
+				if (msgtype == IRCMessageType.RECEIVE) {
 					return Prefix.Length > 0 ? Prefix.Split ('!') [0] : String.Empty;
 				} else {
 					return "LOCALHOST";
@@ -181,7 +181,7 @@ namespace WolfyBot.Core
 
 		public String Host {
 			get {
-				if (msgtype == (int)IRCMessageType.RECEIVE) {
+				if (msgtype == IRCMessageType.RECEIVE) {
 					return Prefix.Length > 0 ? Prefix.Split ('!') [1] : String.Empty;
 				}
 				return "LOCALHOST";
@@ -198,7 +198,7 @@ namespace WolfyBot.Core
 
 		#region private variables
 
-		int msgtype;
+		readonly IRCMessageType msgtype;
 
 		#endregion
 	}
