@@ -81,7 +81,7 @@ namespace WolfyBot.Core
 
 		#endregion
 
-		public void Connect ()
+		public async void Connect ()
 		{
 			using (var client = new TcpClient (Host, Port)) {			
 				var stream = client.GetStream ();
@@ -102,7 +102,7 @@ namespace WolfyBot.Core
 				SendMessageHandler (this, IRCMessageFactory.BuildJoinChannelMessage (channelsString));
 
 				while (true) {
-					var line = reader.ReadLine ();
+					var line = await reader.ReadLineAsync ();
 					var msg = new IRCMessage (line);
 					Log (msg);
 					OnMessageReceived (msg);
