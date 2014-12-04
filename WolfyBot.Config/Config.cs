@@ -40,22 +40,7 @@ namespace WolfyBot.Config
 				IRCPassword = data ["ServerConfig"] ["Password"];
 				IRCChannels = data ["ServerConfig"] ["Channels"];
 			} else {
-				Logging = true;
-				IRCServerHostName = "irc.freenode.net";
-				IRCServerPort = 6667;
-				IRCNick = "wolfybot";
-				IRCChannels = "#WolfyBot";
-				IRCPassword = String.Empty;
-				IniData data = new IniData ();
-				data.Sections.AddSection ("ServerConfig");
-				data ["ServerConfig"].AddKey ("Logging", Logging.ToString ());
-				data ["ServerConfig"].AddKey ("HostName", IRCServerHostName);
-				data ["ServerConfig"].AddKey ("Port", IRCServerPort.ToString ());
-				data ["ServerConfig"].AddKey ("Nick", IRCNick);
-				data ["ServerConfig"].AddKey ("Password", IRCPassword);
-				data ["ServerConfig"].AddKey ("Channels", IRCChannels);
-				var parser = new FileIniDataParser ();
-				parser.WriteFile ("config.ini", data);
+				WriteNewConfig ();
 			}
 			configured = true;
 		}
@@ -84,6 +69,29 @@ namespace WolfyBot.Config
 		{
 			server.MessageReceived += new EventHandler<IRCMessage> (controller.ReceiveMessageHandler);
 			controller.MessageSent += new EventHandler<IRCMessage> (server.SendMessageHandler);
+		}
+
+		public static void WriteNewConfig ()
+		{
+			if (File.Exists ("config.ini")) {
+				File.Delete ("config.ini");
+			}
+			Logging = true;
+			IRCServerHostName = "irc.freenode.net";
+			IRCServerPort = 6667;
+			IRCNick = "wolfybot";
+			IRCChannels = "#WolfyBot";
+			IRCPassword = String.Empty;
+			IniData data = new IniData ();
+			data.Sections.AddSection ("ServerConfig");
+			data ["ServerConfig"].AddKey ("Logging", Logging.ToString ());
+			data ["ServerConfig"].AddKey ("HostName", IRCServerHostName);
+			data ["ServerConfig"].AddKey ("Port", IRCServerPort.ToString ());
+			data ["ServerConfig"].AddKey ("Nick", IRCNick);
+			data ["ServerConfig"].AddKey ("Password", IRCPassword);
+			data ["ServerConfig"].AddKey ("Channels", IRCChannels);
+			var parser = new FileIniDataParser ();
+			parser.WriteFile ("config.ini", data);
 		}
 
 		public static bool Logging {

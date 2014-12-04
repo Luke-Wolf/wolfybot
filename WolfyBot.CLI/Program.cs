@@ -20,21 +20,87 @@ using WolfyBot.Config;
 using KeepAliveCommand;
 using System.Threading;
 using System.Linq;
+using System.ServiceProcess;
 
 namespace WolfyBot.CLI
 {
-	class MainClass
+	class WolfyBotService : ServiceBase
 	{
+		public WolfyBotService ()
+		{
+			this.ServiceName = "Wolfybot";
+			this.EventLog.Log = "Application";
+
+			// These Flags set whether or not to handle that specific
+			//  type of event. Set to true if you need it, false otherwise.
+			/*this.CanHandlePowerEvent = false;
+			this.CanHandleSessionChangeEvent = false;
+			this.CanShutdown = false;*/
+			this.CanPauseAndContinue = true;
+			this.CanStop = true;
+		}
+
 		public static void Main (string[] args)
 		{
+			if (args.Contains ("--help") || args.Length == 0) {
+				Console.WriteLine ("WolfyBot IRC Bot");
+				Console.WriteLine ("Use mono-service to start the service");
+				Console.WriteLine ("Arguments:");
+				Console.WriteLine ("--help: Print this Help");
+				Console.WriteLine ("--new-config: Generate a new configuration file");
+				Application.Exit ();
+			}
+			if (args.Contains ("--new-config")) {
+				Configurator.WriteNewConfig ();
+				Console.WriteLine ("New Config File Written");
+				Application.Exit ();
+			}
 
+			ServiceBase.Run (new WolfyBotService ());
+		}
+
+		protected override void OnStart (string[] args)
+		{
 			Configurator.Configure ();
-			var controller = Configurator.BuildBotController ();
-			var server = Configurator.BuildIRCServer ();
+			controller = Configurator.BuildBotController ();
+			server = Configurator.BuildIRCServer ();
 			Configurator.WireUp (controller, server);
 			server.Connect ();
-			Application.Run ();
-
+			base.OnStart (args);
 		}
+
+		protected override void OnStop ()
+		{
+			server.MessageReceived -= controller.ReceiveMessageHandler;
+			controller.MessageSent -= server.SendMessageHandler;
+			controller = null;
+			server = null;
+			base.OnStop ();
+		}
+
+		/// <summary>
+		/// OnPause: Put your pause code here
+		/// - Pause working threads, etc.
+		/// </summary>
+		protected override void OnPause ()
+		{
+			server.MessageReceived -= controller.ReceiveMessageHandler;
+			controller.MessageSent -= server.SendMessageHandler;
+			controller = null;
+			server = null;
+			base.OnPause ();
+		}
+
+		protected override void OnContinue ()
+		{
+			controller = Configurator.BuildBotController ();
+			server = Configurator.BuildIRCServer ();
+			Configurator.WireUp (controller, server);
+			server.Connect ();
+			base.OnContinue ();
+		}
+
+		BotController controller;
+		IRCServer server;
 	}
 }
