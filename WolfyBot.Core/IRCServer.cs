@@ -27,6 +27,12 @@ namespace WolfyBot.Core
 
 		public IRCServer ()
 		{
+			Host = String.Empty;
+			Port = 6667;
+			Nick = String.Empty;
+			Password = String.Empty;
+			Channels = new List<String> ();
+			Logging = false;
 		}
 
 		public IRCServer (String host, int port, String channels, String nick, String password = "")
@@ -101,9 +107,6 @@ namespace WolfyBot.Core
 					var msg = new IRCMessage (line);
 					Log (msg);
 					OnMessageReceived (msg);
-					if (msg.Command == "PING") {
-						SendMessageHandler (this, IRCMessageFactory.BuildPongMessage (msg.TrailingParameters));
-					}
 				}
 			}
 		}
