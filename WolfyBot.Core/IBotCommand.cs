@@ -25,7 +25,7 @@ namespace WolfyBot.Core
 		/// you desire to return a message to the server
 		/// raise an event
 		/// </summary>
-		void Execute (IRCMessage message);
+		void Execute (object sender, IRCMessage message);
 
 		/// <summary>
 		/// The list of command words that the controller is
@@ -38,6 +38,18 @@ namespace WolfyBot.Core
 		List<String> CommandWords {
 			get;
 		}
+
+		List<String> ParameterWords {
+			get;
+		}
+
+		List<String> TrailingParameterWords {
+			get;
+		}
+
+		void OnScriptMessage (IRCMessage e);
+
+		event EventHandler<IRCMessage> ScriptMessage;
 	}
 }
 
