@@ -87,7 +87,7 @@ namespace WolfBot.Tests
 			Assert.AreEqual ("PRIVMSG #foo :bar", message.ToIRCString ());
 			message = IRCMessageFactory.BuildQuitMessage ();
 			Assert.AreEqual ("QUIT", message.ToIRCString ());
-			message = IRCMessageFactory.BuildLeaveChannelMessage ("#foo");
+			message = IRCMessageFactory.BuildPartMessage ("#foo");
 			Assert.AreEqual ("PART #foo", message.ToIRCString ());
 			message = IRCMessageFactory.BuildUserMessage ("foo", "foobar");
 			Assert.AreEqual ("USER foo 0 * :foobar", message.ToIRCString ());

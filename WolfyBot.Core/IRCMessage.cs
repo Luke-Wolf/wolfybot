@@ -165,7 +165,7 @@ namespace WolfyBot.Core
 			get {
 				if (Parameters.Count > 0) {
 					foreach (var item in Parameters) {
-						if (item.Contains ("#")) {
+						if (item [0] == '#') {
 							return item;
 						}
 					}
