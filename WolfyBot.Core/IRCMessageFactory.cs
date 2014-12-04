@@ -14,6 +14,7 @@
 //    limitations under the License.
 using System;
 using System.Security.Authentication.ExtendedProtection;
+using System.Security.Cryptography;
 
 namespace WolfyBot.Core
 {
@@ -29,14 +30,32 @@ namespace WolfyBot.Core
 			return new IRCMessage (IRCCommand.JOIN, channel);
 		}
 
+		public static IRCMessage BuildModeCommandMessage (String channel, String permissions, String target)
+		{
+			var parameters = String.Format ("{0} {1} {2}", channel, permissions, target);
+			return new IRCMessage (IRCCommand.MODE, parameters);
+		}
+
+		public static IRCMessage BuildKickCommandMessage (String channel, String user, String reason = "")
+		{
+			var parameters = String.Format ("{0} {1}", channel, user);
+			return new IRCMessage (IRCCommand.KICK, parameters, reason);
+		}
+
 		public static IRCMessage BuildSetNickMessage (String nick)
 		{
 			return new IRCMessage (IRCCommand.NICK, nick);
 		}
 
-		public static IRCMessage BuildQuitMessage ()
+		public static IRCMessage BuildOperMessage (String nick, String password)
 		{
-			return new IRCMessage (IRCCommand.QUIT);
+			var parameters = String.Format ("{0} {1}", nick, password);
+			return new IRCMessage (IRCCommand.OPER, parameters);
+		}
+
+		public static IRCMessage BuildPartMessage (String channel, String partMessage = "")
+		{
+			return new IRCMessage (IRCCommand.PART, channel, partMessage);
 		}
 
 		public static IRCMessage BuildSendPassMessage (String password)
@@ -59,9 +78,14 @@ namespace WolfyBot.Core
 			return new IRCMessage (IRCCommand.PRIVMSG, channel, message);
 		}
 
-		public static IRCMessage BuildLeaveChannelMessage (String channel)
+		public static IRCMessage BuildSetTopicMessage (String channel, String message)
 		{
-			return new IRCMessage (IRCCommand.PART, channel);
+			return new IRCMessage (IRCCommand.TOPIC, channel, message);
+		}
+
+		public static IRCMessage BuildQuitMessage ()
+		{
+			return new IRCMessage (IRCCommand.QUIT);
 		}
 
 		public static IRCMessage BuildUserMessage (String name, String realName)
