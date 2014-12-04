@@ -218,12 +218,16 @@ namespace WolfyBot.Core
 	{
 		ACTION,
 		JOIN,
+		MODE,
+		KICK,
 		NICK,
-		PASS,
+		OPER,
 		PART,
+		PASS,
 		PING,
 		PONG,
 		PRIVMSG,
+		TOPIC,
 		USER,
 		QUIT
 	}

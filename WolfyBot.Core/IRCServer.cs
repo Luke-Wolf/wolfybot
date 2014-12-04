@@ -113,7 +113,14 @@ namespace WolfyBot.Core
 		void Log (IRCMessage item)
 		{
 			//TODO: Implement Logging
-			Console.WriteLine (item.ToString ());
+			Console.WriteLine (item.ToLogString ());
+			if (item.Channel != String.Empty) {
+				using (var stream = File.Open (String.Format ("{0}-log.txt", item.Channel), FileMode.Append)) {
+					var filewriter = new StreamWriter (stream);
+					filewriter.WriteLine (item.ToLogString ());
+					filewriter.Flush ();
+				}
+			}
 		}
 
 		protected virtual void OnMessageReceived (IRCMessage e)
