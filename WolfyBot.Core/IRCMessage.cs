@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace WolfyBot.Core
 {
-	public class IRCMessage
+	public class IRCMessage : EventArgs
 	{
 		#region Constructors
 
@@ -29,6 +29,10 @@ namespace WolfyBot.Core
 		public IRCMessage (String ircMessage)
 		{
 			TimeStamp = DateTime.Now;
+			Prefix = String.Empty;
+			Command = String.Empty;
+			Parameters = new List<String> ();
+			TrailingParameters = String.Empty;
 
 			//If an IRC Message starts with a colon the first string before
 			//the space is the prefix
@@ -62,6 +66,7 @@ namespace WolfyBot.Core
 
 		public IRCMessage (IRCCommand command, String parameters = "", String trailingParameters = "")
 		{
+			TimeStamp = DateTime.Now;
 			msgtype = (int)IRCMessageType.SEND;
 			Command = command.ToString ();
 			Parameters = parameters.Split (' ').ToList ();
