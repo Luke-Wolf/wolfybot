@@ -29,10 +29,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="INIFileParser">
+      <HintPath>..\packages\ini-parser.2.1.1\lib\INIFileParser.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="LICENSE" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WolfyBot.Core\WolfyBot.Core.csproj">
+      <Project>{DBEFEE3B-0172-4EAA-BA91-D4AC67A9AEB7}</Project>
+      <Name>WolfyBot.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WolfyBot.BotCommands\WolfyBot.BotCommands.csproj">
+      <Project>{BBBFBD73-CFEC-458D-AF7B-A3283B28000F}</Project>
+      <Name>WolfyBot.BotCommands</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

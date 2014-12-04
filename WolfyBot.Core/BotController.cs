@@ -31,7 +31,7 @@ namespace WolfyBot.Core
 			}
 			_commands = commands;
 			foreach (var item in _commands) {
-				item.ScriptMessage += ScriptMessageHandler;
+				item.ScriptMessage += new EventHandler<IRCMessage> (ScriptMessageHandler);
 			}
 		}
 
@@ -71,7 +71,6 @@ namespace WolfyBot.Core
 					}
 				}
 			}
-			Console.WriteLine ("Received " + e.Command + " Message");
 		}
 
 		public void ScriptMessageHandler (Object sender, IRCMessage e)

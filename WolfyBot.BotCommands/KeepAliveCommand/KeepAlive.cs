@@ -22,6 +22,7 @@ namespace KeepAliveCommand
 	{
 		public KeepAlive ()
 		{
+			Console.WriteLine ("Keep Alive Activated");
 			CommandWords = new List<String> ();
 			CommandWords.Add ("PING");
 			ParameterWords = new List<string> ();

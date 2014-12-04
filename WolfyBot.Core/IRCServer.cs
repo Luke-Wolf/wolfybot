@@ -43,7 +43,6 @@ namespace WolfyBot.Core
 			Password = password;
 			Channels = channels.Split (' ').ToList ();
 			Logging = false;
-			Connect ();
 		}
 
 		#endregion
@@ -90,7 +89,7 @@ namespace WolfyBot.Core
 				writer = new StreamWriter (stream) { NewLine = "\r\n", AutoFlush = true };
 
 				//Identify Bot to IRC Server
-				if (Password != "") {
+				if (Password != String.Empty) {
 					SendMessageHandler (this, IRCMessageFactory.BuildSendPassMessage (Password));
 				}
 				SendMessageHandler (this, IRCMessageFactory.BuildSetNickMessage (Nick));

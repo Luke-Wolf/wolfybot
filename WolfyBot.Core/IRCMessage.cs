@@ -69,7 +69,7 @@ namespace WolfyBot.Core
 			TimeStamp = DateTime.Now;
 			msgtype = (int)IRCMessageType.SEND;
 			Command = command.ToString ();
-			Parameters = parameters.Split (' ').ToList ();
+			Parameters = parameters != String.Empty ? parameters.Split (' ').ToList () : new List<String> ();
 			TrailingParameters = trailingParameters;
 
 		}

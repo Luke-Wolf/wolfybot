@@ -13,7 +13,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using WolfyBot.Core;
+using WolfyBot.Config;
+using KeepAliveCommand;
+using System.Threading;
+using System.Linq;
 
 namespace WolfyBot.CLI
 {
@@ -21,8 +27,14 @@ namespace WolfyBot.CLI
 	{
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Hello World!");
+
+			Configurator.Configure ();
+			var controller = Configurator.BuildBotController ();
+			var server = Configurator.BuildIRCServer ();
+			Configurator.WireUp (controller, server);
+			server.Connect ();
 			Application.Run ();
+
 		}
 	}
 }
