@@ -30,9 +30,9 @@ namespace WolfyBot.Config
 	{
 		public static void Configure ()
 		{
-			if (File.Exists ("config.ini")) {
+			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
 				var parser = new FileIniDataParser ();
-				IniData data = parser.ReadFile ("config.ini");
+				IniData data = parser.ReadFile (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
 				Logging = Convert.ToBoolean (data ["ServerConfig"] ["Logging"]);
 				IRCServerHostName = data ["ServerConfig"] ["HostName"];
 				IRCServerPort = Convert.ToInt16 (data ["ServerConfig"] ["Port"]);
@@ -73,8 +73,10 @@ namespace WolfyBot.Config
 
 		public static void WriteNewConfig ()
 		{
-			if (File.Exists ("config.ini")) {
-				File.Delete ("config.ini");
+			if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
+				Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
+			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
+				File.Delete (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
 			}
 			Logging = true;
 			IRCServerHostName = "irc.freenode.net";
@@ -91,7 +93,7 @@ namespace WolfyBot.Config
 			data ["ServerConfig"].AddKey ("Password", IRCPassword);
 			data ["ServerConfig"].AddKey ("Channels", IRCChannels);
 			var parser = new FileIniDataParser ();
-			parser.WriteFile ("config.ini", data);
+			parser.WriteFile (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini", data);
 		}
 
 		public static bool Logging {

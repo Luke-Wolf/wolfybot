@@ -115,9 +115,11 @@ namespace WolfyBot.Core
 			//TODO: Implement Logging
 			Console.WriteLine (item.ToLogString ());
 			if (item.Channel != String.Empty) {
-				if (!Directory.Exists ("logs"))
-					Directory.CreateDirectory ("logs");
-				using (var stream = File.Open (String.Format ("logs/{0}-log.txt", item.Channel), FileMode.Append)) {
+				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
+					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
+				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs"))
+					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs");
+				using (var stream = File.Open (String.Format (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs/{0}-log.txt", item.Channel), FileMode.Append)) {
 					var filewriter = new StreamWriter (stream);
 					filewriter.WriteLine (item.ToLogString ());
 					filewriter.Flush ();

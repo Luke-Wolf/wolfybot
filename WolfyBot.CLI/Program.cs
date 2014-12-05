@@ -86,6 +86,7 @@ namespace WolfyBot.CLI
 
 		protected override void OnContinue ()
 		{
+			Configurator.Configure ();
 			controller = Configurator.BuildBotController ();
 			server = Configurator.BuildIRCServer ();
 			Configurator.WireUp (controller, server);
