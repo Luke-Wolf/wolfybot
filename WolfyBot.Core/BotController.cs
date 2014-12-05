@@ -51,13 +51,22 @@ namespace WolfyBot.Core
 					//If a command script is listening for a command as opposed to parameters
 					//or trailing parameters invoke it
 					if (item.ParameterWords.Count == 0 && item.TrailingParameterWords.Count == 0) {
-						item.Execute (sender, e);
+						try {
+							item.Execute (sender, e);
+						} catch (Exception ex) {
+							Console.WriteLine (ex.Message);
+						}
+
 						//if a command script is looking for parameters but not trailing parameters
 						//invoke it
 					} else if (item.ParameterWords.Count > 0 && item.TrailingParameterWords.Count == 0) {
 						foreach (var item2 in item.ParameterWords) {
 							if (e.Parameters.Contains (item2)) {
-								item.Execute (sender, e);
+								try {
+									item.Execute (sender, e);
+								} catch (Exception ex) {
+									Console.WriteLine (ex.Message);
+								}
 							}
 						}
 						//if a command script is looking for words in a trailing parameter
@@ -65,7 +74,11 @@ namespace WolfyBot.Core
 					} else if (item.TrailingParameterWords.Count > 0) {
 						foreach (var item3 in item.TrailingParameterWords) {
 							if (e.TrailingParameters.Contains (item3)) {
-								item.Execute (sender, e);
+								try {
+									item.Execute (sender, e);
+								} catch (Exception ex) {
+									Console.WriteLine (ex.Message);
+								}
 							}
 						}
 					}
