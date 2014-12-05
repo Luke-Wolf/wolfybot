@@ -26,6 +26,8 @@ namespace KeepAliveCommand
 			CommandWords.Add ("PING");
 			ParameterWords = new List<string> ();
 			TrailingParameterWords = new List<string> ();
+			SecureLevel = SecureLevelEnum.Bot;
+			Interactive = false;
 		}
 
 		#region IBotCommand implementation
@@ -56,6 +58,16 @@ namespace KeepAliveCommand
 		}
 
 		public List<string> TrailingParameterWords {
+			get;
+			set;
+		}
+
+		public bool Interactive {
+			get;
+			set;
+		}
+
+		public SecureLevelEnum SecureLevel {
 			get;
 			set;
 		}

@@ -31,6 +31,8 @@ namespace ProxyDetectionCommand
 			ParameterWords = new List<string> ();
 			TrailingParameterWords = new List<string> ();
 			kickMessage = kickmessage;
+			SecureLevel = SecureLevelEnum.Bot;
+			Interactive = false;
 		}
 
 		#region IBotCommand implementation
@@ -85,6 +87,16 @@ namespace ProxyDetectionCommand
 		}
 
 		public List<string> TrailingParameterWords {
+			get;
+			set;
+		}
+
+		public bool Interactive {
+			get;
+			set;
+		}
+
+		public SecureLevelEnum SecureLevel {
 			get;
 			set;
 		}

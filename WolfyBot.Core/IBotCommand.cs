@@ -47,9 +47,27 @@ namespace WolfyBot.Core
 			get;
 		}
 
+		bool Interactive {
+			get;
+		}
+
+		SecureLevelEnum SecureLevel {
+			get;
+		}
+
 		void OnScriptMessage (IRCMessage e);
 
 		event EventHandler<IRCMessage> ScriptMessage;
+	}
+
+	public enum SecureLevelEnum : int
+	{
+		User,
+		Voice,
+		HalfOp,
+		Op,
+		Owner,
+		Bot
 	}
 }
 
