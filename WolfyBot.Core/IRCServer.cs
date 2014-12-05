@@ -31,7 +31,7 @@ namespace WolfyBot.Core
 			Port = 6667;
 			Nick = String.Empty;
 			Password = String.Empty;
-			Channels = new List<String> ();
+			Channels = new List<IRCChannel> ();
 			Logging = false;
 		}
 
@@ -41,8 +41,114 @@ namespace WolfyBot.Core
 			Port = port;
 			Nick = nick;
 			Password = password;
-			Channels = channels.Split (' ').ToList ();
+			var channelStringList = channels.Split (' ').ToList ();
+			Channels = new List<IRCChannel> ();
+			foreach (var item in channelStringList) {
+				var _channel = new IRCChannel (item);
+				Channels.Add (_channel);
+				MessageReceived += new EventHandler<IRCMessage> (_channel.HandleReceiveMessages);
+				MessageSent += new EventHandler<IRCMessage> (_channel.HandleSendMessages);
+			}
 			Logging = false;
+		}
+
+		#endregion
+
+		#region Methods
+
+		public async void Connect ()
+		{
+			using (var client = new TcpClient (Host, Port)) {			
+				var stream = client.GetStream ();
+				reader = new StreamReader (stream);
+				writer = new StreamWriter (stream) { NewLine = "\r\n", AutoFlush = true };
+
+				//Identify Bot to IRC Server
+				if (Password != String.Empty) {
+					SendMessageHandler (this, IRCMessageFactory.BuildSendPassMessage (Password));
+				}
+				SendMessageHandler (this, IRCMessageFactory.BuildSetNickMessage (Nick));
+				SendMessageHandler (this, IRCMessageFactory.BuildUserMessage (Nick, Nick));
+
+				String channelsString = String.Empty;
+				foreach (var item in Channels) {
+					channelsString = String.Concat (item, ",", channelsString);
+				}
+				SendMessageHandler (this, IRCMessageFactory.BuildJoinChannelMessage (channelsString));
+
+				while (true) {
+					var line = await reader.ReadLineAsync ();
+					var msg = new IRCMessage (line);
+					Log (msg);
+					OnMessageReceived (msg);
+				}
+			}
+		}
+
+		static void Log (IRCMessage item)
+		{
+			Console.WriteLine (item.ToLogString ());
+			if (item.Channel != String.Empty) {
+
+			} else {
+				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
+					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
+				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs"))
+					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs");
+				using (var stream = File.Open (String.Format (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs/server-log.txt"), FileMode.Append)) {
+					var filewriter = new StreamWriter (stream);
+					filewriter.WriteLine (item.ToLogString ());
+					filewriter.Flush ();
+				}
+			}
+		}
+
+		protected virtual void OnMessageReceived (IRCMessage e)
+		{
+			EventHandler<IRCMessage> handler = MessageReceived;
+			if (handler != null) {
+				handler (this, e);
+			}
+		}
+
+		protected virtual void OnMessageSent (IRCMessage e)
+		{
+			EventHandler<IRCMessage> handler = MessageReceived;
+			if (handler != null) {
+				handler (this, e);
+			}
+		}
+
+		public void SendMessageHandler (Object sender, IRCMessage e)
+		{
+			Log (e);
+			if (e.Command == "JOIN") {
+				var channels = e.Parameters [0].Split (',');
+				foreach (var item in channels) {
+					var _channel = new IRCChannel (item);
+					Channels.Add (_channel);
+					MessageReceived += new EventHandler<IRCMessage> (_channel.HandleReceiveMessages);
+					MessageSent += new EventHandler<IRCMessage> (_channel.HandleSendMessages);
+				}
+			} else if (e.Command == "PART") {
+				var channels = e.Parameters [0].Split (',');
+				foreach (var item in channels) {
+					var channelsToRemove = new  List<IRCChannel> ();
+					foreach (var item2 in Channels) {
+						if (item2.ChannelName == item) {
+							channelsToRemove.Add (item2);
+						}
+					}
+					foreach (var item2 in channelsToRemove) {
+						Channels.Remove (item2);
+						MessageReceived -= item2.HandleReceiveMessages;
+						MessageSent -= item2.HandleSendMessages;
+					}
+					channelsToRemove.Clear ();
+				}
+			}
+			writer.WriteLine (e.ToIRCString ());
+			writer.Flush ();
 		}
 
 		#endregion
@@ -69,7 +175,7 @@ namespace WolfyBot.Core
 			set;
 		}
 
-		public List<String> Channels {
+		public List<IRCChannel> Channels {
 			get;
 			set;
 		}
@@ -81,82 +187,8 @@ namespace WolfyBot.Core
 
 		#endregion
 
-		public async void Connect ()
-		{
-			using (var client = new TcpClient (Host, Port)) {			
-				var stream = client.GetStream ();
-				reader = new StreamReader (stream);
-				writer = new StreamWriter (stream) { NewLine = "\r\n", AutoFlush = true };
-
-				//Identify Bot to IRC Server
-				if (Password != String.Empty) {
-					SendMessageHandler (this, IRCMessageFactory.BuildSendPassMessage (Password));
-				}
-				SendMessageHandler (this, IRCMessageFactory.BuildSetNickMessage (Nick));
-				SendMessageHandler (this, IRCMessageFactory.BuildUserMessage (Nick, Nick));
-
-				String channelsString = String.Empty;
-				foreach (var item in Channels) {
-					channelsString = String.Concat (channelsString, item, " ");
-				}
-				SendMessageHandler (this, IRCMessageFactory.BuildJoinChannelMessage (channelsString));
-
-				while (true) {
-					var line = await reader.ReadLineAsync ();
-					var msg = new IRCMessage (line);
-					Log (msg);
-					OnMessageReceived (msg);
-				}
-			}
-		}
-
-		static void Log (IRCMessage item)
-		{
-			Console.WriteLine (item.ToLogString ());
-			if (item.Channel != String.Empty) {
-				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
-					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
-				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs"))
-					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs");
-				using (var stream = File.Open (String.Format (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs/{0}-log.txt", item.Channel), FileMode.Append)) {
-					var filewriter = new StreamWriter (stream);
-					filewriter.WriteLine (item.ToLogString ());
-					filewriter.Flush ();
-				}
-			} else {
-				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
-					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
-				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs"))
-					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs");
-				using (var stream = File.Open (String.Format (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs/server-log.txt"), FileMode.Append)) {
-					var filewriter = new StreamWriter (stream);
-					filewriter.WriteLine (item.ToLogString ());
-					filewriter.Flush ();
-				}
-			}
-		}
-
-		protected virtual void OnMessageReceived (IRCMessage e)
-		{
-			EventHandler<IRCMessage> handler = MessageReceived;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
-
-		public void SendMessageHandler (Object sender, IRCMessage e)
-		{
-			Log (e);
-			if (e.Command == "JOIN") {
-				Channels.Add (e.TrailingParameters);
-			} else if (e.Command == "PART") {
-				Channels.Remove (e.TrailingParameters);
-			}
-			writer.WriteLine (e.ToIRCString ());
-			writer.Flush ();
-		}
-
 		public event EventHandler<IRCMessage> MessageReceived;
+		public event EventHandler<IRCMessage> MessageSent;
 
 		StreamReader reader;
 		StreamWriter writer;
