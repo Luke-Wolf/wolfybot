@@ -13,17 +13,21 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 using System;
+using System.Net.Sockets;
 using WolfyBot.Core;
+using System.Threading;
 using System.Collections.Generic;
+using System.Net;
 
-namespace KeepAliveCommand
+namespace ProxyDetectionCommand
 {
-	public class KeepAlive : IBotCommand
+	public class ProxyDetector:IBotCommand
 	{
-		public KeepAlive ()
+		public ProxyDetector (int[] ports)
 		{
+			portsToScan = ports;
 			CommandWords = new List<String> ();
-			CommandWords.Add ("PING");
+			CommandWords.Add ("JOIN");
 			ParameterWords = new List<string> ();
 			TrailingParameterWords = new List<string> ();
 		}
@@ -34,7 +38,30 @@ namespace KeepAliveCommand
 
 		public void Execute (object sender, IRCMessage message)
 		{
-			OnScriptMessage (IRCMessageFactory.BuildPongMessage (message.TrailingParameters));
+			var hostname = message.Host.Split ('@') [1];
+			var entry = Dns.GetHostEntry (hostname);
+			if (IsBehindProxy (entry.AddressList)) {
+				OnScriptMessage (IRCMessageFactory.BuildBanMessage (message.Channel, message.Prefix));
+			}
+		}
+
+		static bool IsBehindProxy (IPAddress[] addresses)
+		{
+			var client = new TcpClient ();
+			foreach (var address in addresses) {
+				foreach (var port in portsToScan) {
+					try {
+						client.Connect (address, port);
+						client.Close ();
+						return true;
+
+					} catch (Exception ex) {
+						//intentionally empty, if the ports aren't open they're
+						//not behind a proxy
+					}
+				}
+			}
+			return false;
 		}
 
 		public void OnScriptMessage (IRCMessage e)
@@ -59,6 +86,8 @@ namespace KeepAliveCommand
 			get;
 			set;
 		}
+
+		static int[] portsToScan;
 
 		#endregion
 	}

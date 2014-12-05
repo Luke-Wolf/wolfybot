@@ -217,6 +217,7 @@ namespace WolfyBot.Core
 	public enum IRCCommand:int
 	{
 		ACTION,
+		BAN,
 		JOIN,
 		MODE,
 		KICK,

@@ -25,6 +25,12 @@ namespace WolfyBot.Core
 			return new IRCMessage (IRCCommand.ACTION, channel, message);
 		}
 
+		public static IRCMessage BuildBanMessage (String channel, String netmask)
+		{
+			var parameters = String.Format ("{0} {1}", channel, netmask);
+			return new IRCMessage (IRCCommand.BAN, parameters);
+		}
+
 		public static IRCMessage BuildJoinChannelMessage (String channel)
 		{
 			return new IRCMessage (IRCCommand.JOIN, channel);

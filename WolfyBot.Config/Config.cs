@@ -22,23 +22,32 @@ using KeepAliveCommand;
 using IniParser;
 using IniParser.Model;
 using IniParser.Parser;
+using ProxyDetectionCommand;
 
 
 namespace WolfyBot.Config
 {
 	public static class Configurator
 	{
+		#region PublicMethods
+
 		public static void Configure ()
 		{
 			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
 				var parser = new FileIniDataParser ();
 				IniData data = parser.ReadFile (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
+				#region ReadingServerConfig
 				Logging = Convert.ToBoolean (data ["ServerConfig"] ["Logging"]);
 				IRCServerHostName = data ["ServerConfig"] ["HostName"];
 				IRCServerPort = Convert.ToInt16 (data ["ServerConfig"] ["Port"]);
 				IRCNick = data ["ServerConfig"] ["Nick"];
 				IRCPassword = data ["ServerConfig"] ["Password"];
 				IRCChannels = data ["ServerConfig"] ["Channels"];
+				#endregion ReadingServerConfig
+				#region ReadingBotConfig
+				DetectProxy = Convert.ToBoolean (data ["BotConfig"] ["DetectProxy"]);
+				DetectProxyPorts = data ["BotConfig"] ["DetectProxyPorts"].Split (' ').Select (n => Convert.ToInt32 (n)).ToArray ();
+				#endregion
 			} else {
 				WriteNewConfig ();
 			}
@@ -52,6 +61,10 @@ namespace WolfyBot.Config
 			}
 			var commands = new List<IBotCommand> ();
 			commands.Add (new KeepAlive ());
+			if (DetectProxy == true) {
+				commands.Add (new ProxyDetector (DetectProxyPorts));
+			}
+
 			return new BotController (commands);
 		}
 
@@ -78,13 +91,20 @@ namespace WolfyBot.Config
 			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
 				File.Delete (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
 			}
+			#region DefaultIrcServerConfig
 			Logging = true;
 			IRCServerHostName = "irc.freenode.net";
 			IRCServerPort = 6667;
 			IRCNick = "wolfybot";
 			IRCChannels = "#WolfyBot";
 			IRCPassword = String.Empty;
+			#endregion
+			#region DefaultBotConfig
+			DetectProxy = false;
+			DetectProxyPorts = new [] { 80, 8080, 443 };
+			#endregion
 			IniData data = new IniData ();
+			#region IRCServerWriting
 			data.Sections.AddSection ("ServerConfig");
 			data ["ServerConfig"].AddKey ("Logging", Logging.ToString ());
 			data ["ServerConfig"].AddKey ("HostName", IRCServerHostName);
@@ -92,9 +112,23 @@ namespace WolfyBot.Config
 			data ["ServerConfig"].AddKey ("Nick", IRCNick);
 			data ["ServerConfig"].AddKey ("Password", IRCPassword);
 			data ["ServerConfig"].AddKey ("Channels", IRCChannels);
+			#endregion
+			#region BotWriting
+			data.Sections.AddSection ("BotConfig");
+			data ["BotConfig"].AddKey ("DetectProxy", DetectProxy.ToString ());
+			var portString = String.Empty;
+			foreach (var item in DetectProxyPorts) {
+				portString = String.Concat (item, " ", portString);
+			}
+			data ["BotConfig"].AddKey ("Ports", portString);
+			#endregion
 			var parser = new FileIniDataParser ();
 			parser.WriteFile (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini", data);
 		}
+
+		#endregion
+
+		#region IRCServerConfiguration
 
 		public static bool Logging {
 			get;
@@ -125,6 +159,22 @@ namespace WolfyBot.Config
 			get;
 			set;
 		}
+
+		#endregion
+
+		#region BotConfiguration
+
+		public static bool DetectProxy {
+			get;
+			set;
+		}
+
+		public static int[] DetectProxyPorts {
+			get;
+			set;
+		}
+
+		#endregion
 
 		static bool configured = false;
 
