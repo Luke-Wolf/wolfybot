@@ -13,12 +13,9 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using WolfyBot.Core;
 using WolfyBot.Config;
-using KeepAliveCommand;
-using System.Threading;
 using System.Linq;
 using System.ServiceProcess;
 
@@ -44,7 +41,7 @@ namespace WolfyBot.CLI
 		{
 			if (args.Contains ("--help") || args.Length == 0) {
 				Console.WriteLine ("WolfyBot IRC Bot");
-				Console.WriteLine ("Use mono-service to start the service");
+				Console.WriteLine ("Use mono-service to start the service under Linux or Mac, or InstallUtil under Windows");
 				Console.WriteLine ("Arguments:");
 				Console.WriteLine ("--help: Print this Help");
 				Console.WriteLine ("--new-config: Generate a new configuration file");
@@ -78,10 +75,6 @@ namespace WolfyBot.CLI
 			base.OnStop ();
 		}
 
-		/// <summary>
-		/// OnPause: Put your pause code here
-		/// - Pause working threads, etc.
-		/// </summary>
 		protected override void OnPause ()
 		{
 			server.MessageReceived -= controller.ReceiveMessageHandler;
