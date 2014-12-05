@@ -110,9 +110,8 @@ namespace WolfyBot.Core
 			}
 		}
 
-		void Log (IRCMessage item)
+		static void Log (IRCMessage item)
 		{
-			//TODO: Implement Logging
 			Console.WriteLine (item.ToLogString ());
 			if (item.Channel != String.Empty) {
 				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
@@ -120,6 +119,16 @@ namespace WolfyBot.Core
 				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs"))
 					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs");
 				using (var stream = File.Open (String.Format (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs/{0}-log.txt", item.Channel), FileMode.Append)) {
+					var filewriter = new StreamWriter (stream);
+					filewriter.WriteLine (item.ToLogString ());
+					filewriter.Flush ();
+				}
+			} else {
+				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
+					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
+				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs"))
+					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs");
+				using (var stream = File.Open (String.Format (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/logs/server-log.txt"), FileMode.Append)) {
 					var filewriter = new StreamWriter (stream);
 					filewriter.WriteLine (item.ToLogString ());
 					filewriter.Flush ();

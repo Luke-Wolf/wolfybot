@@ -64,7 +64,7 @@ namespace WolfyBot.Core
 						//invoke it.
 					} else if (item.TrailingParameterWords.Count > 0) {
 						foreach (var item3 in item.TrailingParameterWords) {
-							if (e.TrailingParameters == item3) {
+							if (e.TrailingParameters.Contains (item3)) {
 								item.Execute (sender, e);
 							}
 						}

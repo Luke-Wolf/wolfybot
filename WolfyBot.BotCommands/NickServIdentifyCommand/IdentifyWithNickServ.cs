@@ -27,7 +27,6 @@ namespace NickServIdentifyCommand
 			CommandWords = new List<String> ();
 			CommandWords.Add ("NOTICE");
 			ParameterWords = new List<string> ();
-			ParameterWords.Add (nickServName);
 			TrailingParameterWords = new List<string> ();
 			TrailingParameterWords.Add ("nickname is registered");
 		}
