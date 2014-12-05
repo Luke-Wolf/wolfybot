@@ -23,13 +23,14 @@ namespace ProxyDetectionCommand
 {
 	public class ProxyDetector:IBotCommand
 	{
-		public ProxyDetector (int[] ports)
+		public ProxyDetector (int[] ports, string kickmessage = "")
 		{
 			portsToScan = ports;
 			CommandWords = new List<String> ();
 			CommandWords.Add ("JOIN");
 			ParameterWords = new List<string> ();
 			TrailingParameterWords = new List<string> ();
+			kickMessage = kickmessage;
 		}
 
 		#region IBotCommand implementation
@@ -42,6 +43,7 @@ namespace ProxyDetectionCommand
 			var entry = Dns.GetHostEntry (hostname);
 			if (IsBehindProxy (entry.AddressList)) {
 				OnScriptMessage (IRCMessageFactory.BuildBanMessage (message.Channel, message.Prefix));
+				OnScriptMessage (IRCMessageFactory.BuildKickCommandMessage (message.Channel, message.Prefix.Split ('!') [0], kickMessage));
 			}
 		}
 
@@ -88,6 +90,7 @@ namespace ProxyDetectionCommand
 		}
 
 		static int[] portsToScan;
+		static String kickMessage;
 
 		#endregion
 	}
