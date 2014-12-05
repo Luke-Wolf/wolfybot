@@ -45,8 +45,16 @@ namespace WolfyBot.Config
 				IRCChannels = data ["ServerConfig"] ["Channels"];
 				#endregion ReadingServerConfig
 				#region ReadingBotConfig
-				DetectProxy = Convert.ToBoolean (data ["BotConfig"] ["DetectProxy"]);
-				DetectProxyPorts = data ["BotConfig"] ["DetectProxyPorts"].Split (' ').Select (n => Convert.ToInt32 (n)).ToArray ();
+				#region NickServ
+				NickServEnabled = Convert.ToBoolean (data ["NickServ"] ["Enabled"]);
+				NickServName = data ["NickServ"] ["Name"];
+				NickServPassword = data ["NickServ"] ["Password"];
+				#endregion
+				#region DetectProxy
+				DetectProxyEnabled = Convert.ToBoolean (data ["DetectProxy"] ["Enabled"]);
+				DetectProxyPorts = data ["DetectProxy"] ["Ports"].Split (' ').Select (n => Convert.ToInt32 (n)).ToArray ();
+				DetectProxyBanMessage = data ["DetectProxy"] ["BanMessage"];
+				#endregion
 				#endregion
 			} else {
 				WriteNewConfig ();
@@ -61,8 +69,8 @@ namespace WolfyBot.Config
 			}
 			var commands = new List<IBotCommand> ();
 			commands.Add (new KeepAlive ());
-			if (DetectProxy == true) {
-				commands.Add (new ProxyDetector (DetectProxyPorts));
+			if (DetectProxyEnabled == true) {
+				commands.Add (new ProxyDetector (DetectProxyPorts, DetectProxyBanMessage));
 			}
 
 			return new BotController (commands);
@@ -100,8 +108,16 @@ namespace WolfyBot.Config
 			IRCPassword = String.Empty;
 			#endregion
 			#region DefaultBotConfig
-			DetectProxy = false;
+			#region NickServDefaults
+			NickServEnabled = false;
+			NickServName = "NickServ";
+			NickServPassword = String.Empty;
+			#endregion
+			#region DetectProxyDefaults
+			DetectProxyEnabled = false;
 			DetectProxyPorts = new [] { 80, 8080, 443 };
+			DetectProxyBanMessage = "Don't Use a Proxy to Connect to IRC";
+			#endregion
 			#endregion
 			IniData data = new IniData ();
 			#region IRCServerWriting
@@ -115,12 +131,22 @@ namespace WolfyBot.Config
 			#endregion
 			#region BotWriting
 			data.Sections.AddSection ("BotConfig");
-			data ["BotConfig"].AddKey ("DetectProxy", DetectProxy.ToString ());
+			#region NickServ
+			data.Sections.AddSection ("NickServ");
+			data ["NickServ"].AddKey ("Enabled", NickServEnabled.ToString ());
+			data ["NickServ"].AddKey ("Name", NickServName);
+			data ["NickServ"].AddKey ("Password", NickServPassword);
+			#endregion
+			#region DetectProxy
+			data.Sections.AddSection ("DetectProxy");
+			data ["DetectProxy"].AddKey ("Enabled", DetectProxyEnabled.ToString ());
 			var portString = String.Empty;
 			foreach (var item in DetectProxyPorts) {
 				portString = String.Concat (item, " ", portString);
 			}
-			data ["BotConfig"].AddKey ("Ports", portString);
+			data ["DetectProxy"].AddKey ("Ports", portString);
+			data ["DetectProxy"].AddKey ("BanMessage", DetectProxyBanMessage);
+			#endregion
 			#endregion
 			var parser = new FileIniDataParser ();
 			parser.WriteFile (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini", data);
@@ -164,12 +190,32 @@ namespace WolfyBot.Config
 
 		#region BotConfiguration
 
-		public static bool DetectProxy {
+		public static bool DetectProxyEnabled {
 			get;
 			set;
 		}
 
 		public static int[] DetectProxyPorts {
+			get;
+			set;
+		}
+
+		public static String DetectProxyBanMessage {
+			get;
+			set;
+		}
+
+		public static bool NickServEnabled {
+			get;
+			set;
+		}
+
+		public static String NickServName {
+			get;
+			set;
+		}
+
+		public static String NickServPassword {
 			get;
 			set;
 		}
