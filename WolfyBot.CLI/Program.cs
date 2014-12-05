@@ -58,7 +58,7 @@ namespace WolfyBot.CLI
 
 		protected override void OnStart (string[] args)
 		{
-			Configurator.Configure ();
+			Configurator.ReadConfig ();
 			controller = Configurator.BuildBotController ();
 			server = Configurator.BuildIRCServer ();
 			Configurator.WireUp (controller, server);
@@ -86,7 +86,7 @@ namespace WolfyBot.CLI
 
 		protected override void OnContinue ()
 		{
-			Configurator.Configure ();
+			Configurator.ReadConfig ();
 			controller = Configurator.BuildBotController ();
 			server = Configurator.BuildIRCServer ();
 			Configurator.WireUp (controller, server);

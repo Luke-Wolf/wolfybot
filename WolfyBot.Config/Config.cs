@@ -32,7 +32,7 @@ namespace WolfyBot.Config
 	{
 		#region PublicMethods
 
-		public static void Configure ()
+		public static void ReadConfig ()
 		{
 			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
 				var parser = new FileIniDataParser ();
@@ -45,7 +45,7 @@ namespace WolfyBot.Config
 				IRCNick = data ["ServerConfig"] ["Nick"];
 				IRCPassword = data ["ServerConfig"] ["Password"];
 				IRCChannels = data ["ServerConfig"] ["Channels"];
-				DontLogChannels = data ["ServerConfig"] ["DontLogChannels"].Split (' ');
+				DontLogChannels = data ["ServerConfig"] ["DontLog"].Split (' ');
 				#endregion
 
 				#region Bot
@@ -72,7 +72,7 @@ namespace WolfyBot.Config
 		public static BotController BuildBotController ()
 		{
 			if (!configured) {
-				Configure ();
+				ReadConfig ();
 			}
 			var commands = new List<IBotCommand> ();
 			commands.Add (new KeepAlive ());
@@ -89,7 +89,7 @@ namespace WolfyBot.Config
 		public static IRCServer BuildIRCServer ()
 		{
 			if (!configured) {
-				Configure ();
+				ReadConfig ();
 			}
 			var server = new IRCServer (IRCServerHostName, IRCServerPort, IRCChannels, IRCNick, IRCPassword);
 			server.Logging = Logging;
@@ -104,10 +104,6 @@ namespace WolfyBot.Config
 
 		public static void WriteNewConfig ()
 		{
-			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
-				File.Delete (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
-			}
-
 			#region IrcServerConfig
 			Logging = true;
 			IRCServerHostName = "irc.freenode.net";
@@ -135,9 +131,12 @@ namespace WolfyBot.Config
 		}
 
 		public static void WriteConfig ()
-		{
+		{		
 			if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
 				Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
+			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
+				File.Delete (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
+			}
 
 			var data = new IniData ();
 
