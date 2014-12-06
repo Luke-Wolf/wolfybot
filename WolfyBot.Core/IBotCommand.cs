@@ -66,6 +66,8 @@ namespace WolfyBot.Core
 		Voice,
 		HalfOp,
 		Op,
+		SuperOp,
+		ChannelOwner,
 		Owner,
 		Bot
 	}

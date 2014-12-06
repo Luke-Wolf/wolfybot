@@ -31,13 +31,7 @@ namespace WolfyBot.Core
 			Muted = false;
 			LoggingEnabled = true;
 			joinQueue = new List<IRCMessage> ();
-			Users = new List<string> ();
-			Voiced = new List<string> ();
-			HalfOps = new List<string> ();
-			Ops = new List<string> ();
-			SuperOps = new List<string> ();
-			ChannelOwner = new List<string> ();
-
+			Users = new List<IRCUser> ();
 		}
 
 		#endregion
@@ -54,6 +48,8 @@ namespace WolfyBot.Core
 
 		public void HandleReceiveMessages (object sender, IRCMessage e)
 		{
+			if (e.Channel == String.Empty)
+				return;
 			//If it's not our channel don't care about it
 			if (e.Channel != ChannelName)
 				return;
@@ -74,26 +70,25 @@ namespace WolfyBot.Core
 				RemoveUser (e.Sender);
 				return;
 			} else if (e.Command == "MODE") {
-				switch (e.Parameters [1]) {
-				case "+v":
-					RemoveUser (e.Sender);
-					Voiced.Add (e.Sender);
+				if (e.Parameters [1] == "+v") {
+					var user = FindUser (e.Sender);
+					user.Mode = SecureLevelEnum.Voice;
 					return;
-				case "+h":
-					RemoveUser (e.Sender);
-					HalfOps.Add (e.Sender);
+				} else if (e.Parameters [1] == "+h") {
+					var user = FindUser (e.Sender);
+					user.Mode = SecureLevelEnum.HalfOp;
 					return;
-				case "+o":
-					RemoveUser (e.Sender);
-					Ops.Add (e.Sender);
+				} else if (e.Parameters [1] == "+o") {
+					var user = FindUser (e.Sender);
+					user.Mode = SecureLevelEnum.Op;
 					return;
-				case "+a":
-					RemoveUser (e.Sender);
-					SuperOps.Add (e.Sender);
+				} else if (e.Parameters [1] == "+a") {
+					var user = FindUser (e.Sender);
+					user.Mode = SecureLevelEnum.SuperOp;
 					return;
-				case "+q":
-					RemoveUser (e.Sender);
-					ChannelOwner.Add (e.Sender);
+				} else if (e.Parameters [1] == "+q") {
+					var user = FindUser (e.Sender);
+					user.Mode = SecureLevelEnum.ChannelOwner;
 					return;
 				}
 				return;
@@ -112,33 +107,19 @@ namespace WolfyBot.Core
 
 		}
 
+		public IRCUser FindUser (String nick)
+		{
+			foreach (var user in Users) {
+				if (user.Nick == nick)
+					return user;
+			}
+			return null;
+		}
+
 		void ChangeNick (string oldName, string newName)
 		{
-			if (Users.Contains (oldName)) {
-				Users.Remove (oldName);
-				Users.Add (newName);
-				return;
-			} else if (Voiced.Contains (oldName)) {
-				Voiced.Remove (oldName);
-				Voiced.Add (newName);
-				return;
-			} else if (HalfOps.Contains (oldName)) {
-				HalfOps.Remove (oldName);
-				HalfOps.Add (newName);
-				return;
-			} else if (Ops.Contains (oldName)) {
-				Ops.Remove (oldName);
-				Ops.Add (newName);
-				return;
-			} else if (SuperOps.Contains (oldName)) {
-				SuperOps.Remove (oldName);
-				SuperOps.Add (newName);
-				return;
-			} else if (ChannelOwner.Contains (oldName)) {
-				ChannelOwner.Remove (oldName);
-				ChannelOwner.Add (newName);
-				return;
-			}
+			var user = FindUser (oldName);
+			user.Nick = newName;
 		}
 
 		public void HandleSendMessages (Object sender, IRCMessage e)
@@ -170,51 +151,35 @@ namespace WolfyBot.Core
 		void ParsePermission (string name)
 		{
 			if (name.StartsWith ("&")) {
-				SuperOps.Add (name);
+				Users.Add (new IRCUser (name, SecureLevelEnum.SuperOp));
 				return;
 			} else if (name.StartsWith ("~")) {
-				ChannelOwner.Add (name);
+				Users.Add (new IRCUser (name, SecureLevelEnum.ChannelOwner));
 				return;
 			} else if (name.StartsWith ("@")) {
-				Ops.Add (name);
+				Users.Add (new IRCUser (name, SecureLevelEnum.Op));
 				return;
 			} else if (name.StartsWith ("%")) {
-				HalfOps.Add (name);
+				Users.Add (new IRCUser (name, SecureLevelEnum.HalfOp));
 				return;
 			} else if (name.StartsWith ("+")) {
-				Voiced.Add (name);
+				Users.Add (new IRCUser (name, SecureLevelEnum.Voice));
 				return;
 			} else {
-				Users.Add (name);
+				Users.Add (new IRCUser (name, SecureLevelEnum.User));
 				return;
 			}
 		}
 
 		void RemoveUser (string name)
 		{
-			if (Users.Contains (name)) {
-				Users.Remove (name);
-				return;
-			} else if (Voiced.Contains (name)) {
-				Voiced.Remove (name);
-				return;
-			} else if (HalfOps.Contains (name)) {
-				HalfOps.Remove (name);
-				return;
-			} else if (Ops.Contains (name)) {
-				Ops.Remove (name);
-				return;
-			} else if (SuperOps.Contains (name)) {
-				SuperOps.Remove (name);
-				return;
-			} else if (ChannelOwner.Contains (name)) {
-				ChannelOwner.Remove (name);
-				return;
-			}
+			var user = FindUser (name);
+			Users.Remove (user);
 		}
 
 		void Log (IRCMessage e)
 		{
+			Console.WriteLine (e.ToLogString ());
 			if (LoggingEnabled) {
 				if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
 					Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
@@ -252,36 +217,10 @@ namespace WolfyBot.Core
 			set;
 		}
 
-		public List<String> Users {
+		public List<IRCUser> Users {
 			get;
 			set;
 		}
-
-		public List<String> Voiced {
-			get;
-			set;
-		}
-
-		public List<String> HalfOps {
-			get;
-			set;
-		}
-
-		public List<String> Ops {
-			get;
-			set;
-		}
-
-		public List<String> SuperOps {
-			get;
-			set;
-		}
-
-		public List<String> ChannelOwner {
-			get;
-			set;
-		}
-
 
 		#endregion
 
