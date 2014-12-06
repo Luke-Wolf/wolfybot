@@ -49,7 +49,7 @@ namespace WolfyBot.Config
 				#endregion
 
 				#region Bot
-
+				BotPassword = data ["BotConfig"] ["Password"];
 				#region NickServ
 				NickServEnabled = Convert.ToBoolean (data ["NickServ"] ["Enabled"]);
 				NickServName = data ["NickServ"] ["Name"];
@@ -83,7 +83,7 @@ namespace WolfyBot.Config
 				commands.Add (new ProxyDetector (DetectProxyPorts, DetectProxyBanMessage));
 			}
 
-			return new BotController (commands);
+			return new BotController (commands, BotPassword);
 		}
 
 		public static IRCServer BuildIRCServer ()
@@ -115,6 +115,7 @@ namespace WolfyBot.Config
 			#endregion
 
 			#region BotConfig
+			BotPassword = "Foobar";
 			#region NickServ
 			NickServEnabled = false;
 			NickServName = "NickServ";
@@ -157,6 +158,7 @@ namespace WolfyBot.Config
 
 			#region Bot
 			data.Sections.AddSection ("BotConfig");
+			data ["BotConfig"].AddKey ("Password", BotPassword);
 
 			#region NickServ
 			data.Sections.AddSection ("NickServ");
@@ -224,6 +226,11 @@ namespace WolfyBot.Config
 		#endregion
 
 		#region BotConfiguration
+
+		public static String BotPassword {
+			get;
+			set;
+		}
 
 		public static bool DetectProxyEnabled {
 			get;

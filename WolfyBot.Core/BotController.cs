@@ -24,8 +24,10 @@ namespace WolfyBot.Core
 {
 	public class BotController
 	{
-		public BotController (List<IBotCommand> commands)
+		public BotController (List<IBotCommand> commands, String botPassword)
 		{
+			password = botPassword;
+			ownerNick = String.Empty;
 			if (commands.Count == 0) {
 				throw new NotSupportedException ();
 			}
@@ -47,6 +49,19 @@ namespace WolfyBot.Core
 		public void ReceiveMessageHandler (Object sender, IRCMessage e)
 		{
 			var server = sender as IRCServer;
+			//handle Setting ownership on bot
+			if (e.Command == "PRIVMSG" && e.Parameters [0] == server.Nick && e.TrailingParameters == password) {
+				Console.WriteLine ("USER:" + e.Sender + " Now has control of the bot");
+				ownerNick = e.Sender;
+			} //handle nick change by owner
+			if (e.Sender == ownerNick && e.Command == "NICK") {
+				Console.WriteLine ("Owner Changed Nick to: " + e.TrailingParameters);
+				ownerNick = e.TrailingParameters;
+			}//handle owner leaving the server
+			if (e.Sender == ownerNick && e.Command == "QUIT") {
+				Console.WriteLine ("Owner has left the server");
+				ownerNick = String.Empty;
+			}
 			foreach (var item in _commands) {
 				if (item.CommandWords.Contains (e.Command)) {
 					//If a command script is listening for a command as opposed to parameters
@@ -113,11 +128,18 @@ namespace WolfyBot.Core
 				return false;
 
 			var user = _channel.FindUser (message.Sender);
+			//if the user's nick is the owner nick of the bot set the mode
+			//for the channel to be Owner
+			if (user.Nick == ownerNick) {
+				user.Mode = SecureLevelEnum.Owner;
+			}
 			return user.Mode >= command.SecureLevel;
 		}
 
 		public event EventHandler<IRCMessage> MessageSent;
 
+		static String password;
+		static String ownerNick;
 		List<IBotCommand> _commands;
 	}
 }
