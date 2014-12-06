@@ -76,7 +76,7 @@ namespace WolfBot.Tests
 			message = IRCMessageFactory.BuildJoinChannelMessage ("#foo");
 			Assert.AreEqual ("JOIN #foo", message.ToIRCString ());
 			message = IRCMessageFactory.BuildSetNickMessage ("foo");
-			Assert.AreEqual ("NICK foo", message.ToIRCString ());
+			Assert.AreEqual ("NICK :foo", message.ToIRCString ());
 			message = IRCMessageFactory.BuildSendPassMessage ("foo");
 			Assert.AreEqual ("PASS foo", message.ToIRCString ());
 			message = IRCMessageFactory.BuildPingMessage ("foo.bar");
