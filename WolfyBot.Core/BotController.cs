@@ -126,7 +126,9 @@ namespace WolfyBot.Core
 			//should not happen
 			if (_channel == null)
 				return false;
-
+			//Check if the channel is muted and the command is interactive
+			if (_channel.Muted && command.Interactive)
+				return false;
 			var user = _channel.FindUser (message.Sender);
 			//if the user's nick is the owner nick of the bot set the mode
 			//for the channel to be Owner
