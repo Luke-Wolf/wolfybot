@@ -62,7 +62,7 @@ namespace WolfyBot.Core
 
 	public enum SecureLevelEnum : int
 	{
-		User,
+		User = 0,
 		Voice,
 		HalfOp,
 		Op,
