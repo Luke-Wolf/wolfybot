@@ -48,6 +48,11 @@ namespace WolfyBot.Core
 
 		public void HandleReceiveMessages (object sender, IRCMessage e)
 		{
+			//QUIT Commands are Global to server
+			if (e.Command == "QUIT") {
+				RemoveUser (e.Sender);
+				return;
+			}
 			if (e.Channel == String.Empty)
 				return;
 			//If it's not our channel don't care about it
@@ -66,7 +71,7 @@ namespace WolfyBot.Core
 			} else if (e.Command == "JOIN") {
 				ParsePermission (e.Sender);
 				return;
-			} else if (e.Command == "QUIT" | e.Command == "PART") {
+			} else if (e.Command == "PART") {
 				RemoveUser (e.Sender);
 				return;
 			} else if (e.Command == "MODE") {
@@ -174,6 +179,8 @@ namespace WolfyBot.Core
 		void RemoveUser (string name)
 		{
 			var user = FindUser (name);
+			if (user == null)
+				return;
 			Users.Remove (user);
 		}
 
