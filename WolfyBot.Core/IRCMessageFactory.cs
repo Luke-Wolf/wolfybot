@@ -50,7 +50,7 @@ namespace WolfyBot.Core
 
 		public static IRCMessage BuildSetNickMessage (String nick)
 		{
-			return new IRCMessage (IRCCommand.NICK, nick);
+			return new IRCMessage (IRCCommand.NICK, trailingParameters: nick);
 		}
 
 		public static IRCMessage BuildOperMessage (String nick, String password)

@@ -93,7 +93,7 @@ namespace WolfyBot.Core
 				}
 				return;
 			} else if (e.Command == "NICK") {
-				ChangeNick (e.Sender, e.Parameters [0]);
+				ChangeNick (e.Sender, e.TrailingParameters);
 			} else if (e.Command == "PRIVMSG" && e.TrailingParameters.Contains ("!shutup") &&
 			           e.TrailingParameters.Contains (server.Nick)) {
 				Muted = true;
