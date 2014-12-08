@@ -18,6 +18,7 @@ using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Security;
 
 namespace WolfyBot.Core
 {
@@ -33,13 +34,15 @@ namespace WolfyBot.Core
 			Password = String.Empty;
 			Channels = new List<IRCChannel> ();
 			Logging = false;
+			SSL = false;
 		}
 
-		public IRCServer (String host, int port, String channels, String nick, String password = "")
+		public IRCServer (String host, int port, String channels, String nick, bool ssl, String password = "")
 		{
 			Host = host;
 			Port = port;
 			Nick = nick;
+			SSL = ssl;
 			Password = password;
 			var channelStringList = channels.Split (' ').ToList ();
 			Channels = new List<IRCChannel> ();
@@ -58,11 +61,22 @@ namespace WolfyBot.Core
 
 		public async void Connect ()
 		{
-			using (var client = new TcpClient (Host, Port)) {			
-				var stream = client.GetStream ();
-				reader = new StreamReader (stream);
-				writer = new StreamWriter (stream) { NewLine = "\r\n", AutoFlush = true };
+			using (var client = new TcpClient (Host, Port)) {
+				if (SSL) {
+					//need to disable the validation callback otherwise it errors due to the fact
+					//that IRC certificates will cause SslStream to error off otherwise hence the
+					//lamda function
+					var stream = new SslStream (client.GetStream (), false, (a, b, c, d) => true);
 
+					stream.AuthenticateAsClient (Host, null, 
+						System.Security.Authentication.SslProtocols.Default, false);
+					reader = new StreamReader (stream);
+					writer = new StreamWriter (stream){ NewLine = "\r\n", AutoFlush = true };
+				} else {
+					var stream = client.GetStream ();
+					reader = new StreamReader (stream);
+					writer = new StreamWriter (stream) { NewLine = "\r\n", AutoFlush = true };
+				}
 				//Identify Bot to IRC Server
 				if (Password != String.Empty) {
 					SendMessageHandler (this, IRCMessageFactory.BuildSendPassMessage (Password));
@@ -195,6 +209,11 @@ namespace WolfyBot.Core
 		}
 
 		public bool Logging {
+			get;
+			set;
+		}
+
+		public bool SSL {
 			get;
 			set;
 		}

@@ -42,6 +42,7 @@ namespace WolfyBot.Config
 				Logging = Convert.ToBoolean (data ["ServerConfig"] ["Logging"]);
 				IRCServerHostName = data ["ServerConfig"] ["HostName"];
 				IRCServerPort = Convert.ToInt16 (data ["ServerConfig"] ["Port"]);
+				IRCSSLEnabled = Convert.ToBoolean (data ["ServerConfig"] ["SSL_Enabled"]);
 				IRCNick = data ["ServerConfig"] ["Nick"];
 				IRCPassword = data ["ServerConfig"] ["Password"];
 				IRCChannels = data ["ServerConfig"] ["Channels"];
@@ -91,7 +92,7 @@ namespace WolfyBot.Config
 			if (!configured) {
 				ReadConfig ();
 			}
-			var server = new IRCServer (IRCServerHostName, IRCServerPort, IRCChannels, IRCNick, IRCPassword);
+			var server = new IRCServer (IRCServerHostName, IRCServerPort, IRCChannels, IRCNick, IRCSSLEnabled, IRCPassword);
 			server.Logging = Logging;
 			return server;
 		}
@@ -108,6 +109,7 @@ namespace WolfyBot.Config
 			Logging = true;
 			IRCServerHostName = "irc.freenode.net";
 			IRCServerPort = 6667;
+			IRCSSLEnabled = false;
 			IRCNick = "wolfybot";
 			IRCChannels = "#WolfyBot";
 			IRCPassword = String.Empty;
@@ -146,6 +148,7 @@ namespace WolfyBot.Config
 			data ["ServerConfig"].AddKey ("Logging", Logging.ToString ());
 			data ["ServerConfig"].AddKey ("HostName", IRCServerHostName);
 			data ["ServerConfig"].AddKey ("Port", IRCServerPort.ToString ());
+			data ["ServerConfig"].AddKey ("SSL_Enabled", IRCSSLEnabled.ToString ());
 			data ["ServerConfig"].AddKey ("Nick", IRCNick);
 			data ["ServerConfig"].AddKey ("Password", IRCPassword);
 			data ["ServerConfig"].AddKey ("Channels", IRCChannels);
@@ -219,6 +222,11 @@ namespace WolfyBot.Config
 		}
 
 		public static String IRCPassword {
+			get;
+			set;
+		}
+
+		public static bool IRCSSLEnabled {
 			get;
 			set;
 		}
