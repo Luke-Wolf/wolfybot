@@ -63,11 +63,13 @@ namespace WolfyBot.Core
 				ownerNick = String.Empty;
 			}
 
-			var commandItems = (from c in _commands //Get Modules that are just listening for a command
-			                             where c.CommandWords.Contains (e.Command) &&
-			                        c.ParameterWords.Count == 0 &&
-			                        c.TrailingParameterWords.Count == 0
-			                    select c).Union (//Get modules that are listening for a command and a parameter
+			var commandItems = (
+			                       from c in _commands //Get Modules that are just listening for a command
+	                               where c.CommandWords.Contains (e.Command) &&
+			                           c.ParameterWords.Count == 0 &&
+			                           c.TrailingParameterWords.Count == 0
+			                       select c
+			                   ).Union (//Get modules that are listening for a command and a parameter
 				                   from c in _commands
 				                   from p in c.ParameterWords
 				                   where c.CommandWords.Contains (e.Command) &&
@@ -76,7 +78,8 @@ namespace WolfyBot.Core
 			                   ).Union (// get modules that are listening for a command and a trailing parameter
 				                   from c in _commands
 				                   from p in c.TrailingParameterWords
-				                   where e.TrailingParameters.Contains (p)
+				                   where c.CommandWords.Contains (e.Command) &&
+				                       e.TrailingParameters.Contains (p)
 				                   select c
 			                   );
 			foreach (var item in commandItems) {
