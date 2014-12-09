@@ -63,78 +63,30 @@ namespace WolfyBot.Core
 				ownerNick = String.Empty;
 			}
 
-            var commandItems = (from c in _commands                              
-                               
-                                where c.CommandWords .Contains(e.Command) && 
-                                c.ParameterWords.Count == 0 &&
-                                c.TrailingParameterWords.Count == 0
-                                select c).Union(
-                                from c in _commands
-                                from p in c.ParameterWords
-                                where c.CommandWords.Contains(e.Command) &&
-                                e.Parameters.Contains(p)
-                                select c
-                                ).Union(
-                                from c in _commands
-                                from p in c.TrailingParameterWords
-                                where e.TrailingParameters.Contains(p)
-                                select c
-                                    );
-            foreach (var item in commandItems)
-            {
-                try
-                {
-                    if (CheckPermissions (item, e, server))
-								item.Execute (sender, e);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-
-            /*
+			var commandItems = (from c in _commands //Get Modules that are just listening for a command
+			                             where c.CommandWords.Contains (e.Command) &&
+			                        c.ParameterWords.Count == 0 &&
+			                        c.TrailingParameterWords.Count == 0
+			                    select c).Union (//Get modules that are listening for a command and a parameter
+				                   from c in _commands
+				                   from p in c.ParameterWords
+				                   where c.CommandWords.Contains (e.Command) &&
+				                       e.Parameters.Contains (p)
+				                   select c
+			                   ).Union (// get modules that are listening for a command and a trailing parameter
+				                   from c in _commands
+				                   from p in c.TrailingParameterWords
+				                   where e.TrailingParameters.Contains (p)
+				                   select c
+			                   );
 			foreach (var item in commandItems) {
-				if (item.CommandWords.Contains (e.Command)) {
-					//If a command script is listening for a command as opposed to parameters
-					//or trailing parameters invoke it
-					if (item.ParameterWords.Count == 0 && item.TrailingParameterWords.Count == 0) {
-						try {
-							if (CheckPermissions (item, e, server))
-								item.Execute (sender, e);
-						} catch (Exception ex) {
-							Console.WriteLine (ex.Message);
-						}
-
-						//if a command script is looking for parameters but not trailing parameters
-						//invoke it
-					} else if (item.ParameterWords.Count > 0 && item.TrailingParameterWords.Count == 0) {
-						foreach (var item2 in item.ParameterWords) {
-							if (e.Parameters.Contains (item2)) {
-								try {
-									if (CheckPermissions (item, e, server))
-										item.Execute (sender, e);
-								} catch (Exception ex) {
-									Console.WriteLine (ex.Message);
-								}
-							}
-						}
-						//if a command script is looking for words in a trailing parameter
-						//invoke it.
-					} else if (item.TrailingParameterWords.Count > 0) {
-						foreach (var item3 in item.TrailingParameterWords) {
-							if (e.TrailingParameters.Contains (item3)) {
-								try {
-									if (CheckPermissions (item, e, server))
-										item.Execute (sender, e);
-								} catch (Exception ex) {
-									Console.WriteLine (ex.Message);
-								}
-							}
-						}
-					}
+				try {
+					if (CheckPermissions (item, e, server))
+						item.Execute (sender, e);
+				} catch (Exception ex) {
+					Console.WriteLine (ex.Message);
 				}
-			}*/
+			}
 		}
 
 		public void ScriptMessageHandler (Object sender, IRCMessage e)
