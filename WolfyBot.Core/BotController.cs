@@ -62,7 +62,39 @@ namespace WolfyBot.Core
 				Console.WriteLine ("Owner has left the server");
 				ownerNick = String.Empty;
 			}
-			foreach (var item in _commands) {
+
+            var commandItems = (from c in _commands                              
+                               
+                                where c.CommandWords .Contains(e.Command) && 
+                                c.ParameterWords.Count == 0 &&
+                                c.TrailingParameterWords.Count == 0
+                                select c).Union(
+                                from c in _commands
+                                from p in c.ParameterWords
+                                where c.CommandWords.Contains(e.Command) &&
+                                e.Parameters.Contains(p)
+                                select c
+                                ).Union(
+                                from c in _commands
+                                from p in c.TrailingParameterWords
+                                where e.TrailingParameters.Contains(p)
+                                select c
+                                    );
+            foreach (var item in commandItems)
+            {
+                try
+                {
+                    if (CheckPermissions (item, e, server))
+								item.Execute (sender, e);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            /*
+			foreach (var item in commandItems) {
 				if (item.CommandWords.Contains (e.Command)) {
 					//If a command script is listening for a command as opposed to parameters
 					//or trailing parameters invoke it
@@ -102,7 +134,7 @@ namespace WolfyBot.Core
 						}
 					}
 				}
-			}
+			}*/
 		}
 
 		public void ScriptMessageHandler (Object sender, IRCMessage e)
