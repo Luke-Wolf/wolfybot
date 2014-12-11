@@ -48,21 +48,24 @@ namespace WolfyBot.Core
 
 		public void ReceiveMessageHandler (Object sender, IRCMessage e)
 		{
-			var server = sender as IRCServer;
-			//handle Setting ownership on bot
-			if (e.Command == "PRIVMSG" && e.Parameters [0] == server.Nick && e.TrailingParameters == password) {
-				Console.WriteLine ("USER:" + e.Sender + " Now has control of the bot");
-				ownerNick = e.Sender;
-			} //handle nick change by owner
-			if (e.Sender == ownerNick && e.Command == "NICK") {
-				Console.WriteLine ("Owner Changed Nick to: " + e.TrailingParameters);
-				ownerNick = e.TrailingParameters;
-			}//handle owner leaving the server
-			if (e.Sender == ownerNick && e.Command == "QUIT") {
-				Console.WriteLine ("Owner has left the server");
-				ownerNick = String.Empty;
+			try {
+				var server = sender as IRCServer;
+				//handle Setting ownership on bot
+				if (e.Command == "PRIVMSG" && e.Parameters [0] == server.Nick && e.TrailingParameters == password) {
+					Console.WriteLine ("USER:" + e.Sender + " Now has control of the bot");
+					ownerNick = e.Sender;
+				} //handle nick change by owner
+				if (e.Sender == ownerNick && e.Command == "NICK") {
+					Console.WriteLine ("Owner Changed Nick to: " + e.TrailingParameters);
+					ownerNick = e.TrailingParameters;
+				}//handle owner leaving the server
+				if (e.Sender == ownerNick && e.Command == "QUIT") {
+					Console.WriteLine ("Owner has left the server");
+					ownerNick = String.Empty;
+				}
+			} catch (NullReferenceException ex) {
+				Console.WriteLine ("Caller is not an IRC server connection");
 			}
-
 			var commandItems = (
 			                       from c in _commands //Get Modules that are just listening for a command
 	                               where c.CommandWords.Contains (e.Command) &&
@@ -84,6 +87,7 @@ namespace WolfyBot.Core
 			                   );
 			foreach (var item in commandItems) {
 				try {
+					var server = sender as IRCServer;
 					if (CheckPermissions (item, e, server))
 						item.Execute (sender, e);
 				} catch (Exception ex) {

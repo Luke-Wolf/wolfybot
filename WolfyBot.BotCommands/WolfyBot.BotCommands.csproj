@@ -37,6 +37,7 @@
     <Compile Include="KeepAliveCommand\KeepAlive.cs" />
     <Compile Include="ProxyDetectionCommand\ProxyDetector.cs" />
     <Compile Include="NickServIdentifyCommand\IdentifyWithNickServ.cs" />
+    <Compile Include="PipeCleanerCommand\Pipecleaner.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -58,5 +59,6 @@
     <Folder Include="KeepAliveCommand\" />
     <Folder Include="ProxyDetectionCommand\" />
     <Folder Include="NickServIdentifyCommand\" />
+    <Folder Include="PipeCleanerCommand\" />
   </ItemGroup>
 </Project>
