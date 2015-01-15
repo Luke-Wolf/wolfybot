@@ -22,10 +22,16 @@ using System.Net.Security;
 
 namespace WolfyBot.Core
 {
+	/// <summary>
+	/// This class represents a connection to an IRC Server
+	/// </summary>
 	public class IRCServer
 	{
 		#region constructors
 
+		/// <summary>
+		/// Initializes an unconfigured instance of the <see cref="WolfyBot.Core.IRCServer"/> class.
+		/// </summary>
 		public IRCServer ()
 		{
 			Host = String.Empty;
@@ -37,6 +43,15 @@ namespace WolfyBot.Core
 			SSL = false;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WolfyBot.Core.IRCServer"/> class.
+		/// </summary>
+		/// <param name="host">Hostname of the IRC Server</param>
+		/// <param name="port">Port to try to connect on</param>
+		/// <param name="channels">List of Channels to connect to seperated by spaces</param>
+		/// <param name="nick">Nickname of the bot</param>
+		/// <param name="ssl">If set to <c>true</c> ssl is enable for this connection.</param>
+		/// <param name="password">Password to connect to the IRC server.</param>
 		public IRCServer (String host, int port, String channels, String nick, bool ssl, String password = "")
 		{
 			Host = host;
@@ -59,6 +74,9 @@ namespace WolfyBot.Core
 
 		#region Methods
 
+		/// <summary>
+		/// Establish a connection to the IRC Server and read from it
+		/// </summary>
 		public async void Connect ()
 		{
 			using (var client = new TcpClient (Host, Port)) {
@@ -137,6 +155,11 @@ namespace WolfyBot.Core
 			}
 		}
 
+		/// <summary>
+		/// The handler for sending a message
+		/// </summary>
+		/// <param name="sender">the object sending the event, usually 'this'</param>
+		/// <param name="e">The IRC Message to send over the connection</param>
 		public void SendMessageHandler (Object sender, IRCMessage e)
 		{
 			if (e.Channel == String.Empty)
