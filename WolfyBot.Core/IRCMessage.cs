@@ -178,9 +178,8 @@ namespace WolfyBot.Core
 			get {
 				if (msgtype == IRCMessageType.RECEIVE) {
 					return Prefix.Length > 0 ? Prefix.Split ('!') [0] : String.Empty;
-				} else {
-					return "LOCALHOST";
 				}
+				return "LOCALHOST";
 			}
 		}
 

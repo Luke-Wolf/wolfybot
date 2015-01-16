@@ -94,7 +94,7 @@ namespace WolfyBot.Core
 				}
 				SendMessageHandler (this, IRCMessageFactory.BuildJoinChannelMessage (channelsString));
 
-				while (true) {
+				while (client.Connected) {
 					var line = await reader.ReadLineAsync ();
 					var msg = new IRCMessage (line);
 					if (msg.Channel == String.Empty)
