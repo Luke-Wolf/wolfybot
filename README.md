@@ -14,7 +14,8 @@ Before you run the bot you should generate a default configuration file using
  WolfyBot.CLI.exe --new-config and configure it to your liking
 
  In order to extend behavior implement the IBotCommand interface, and then extend  
- the configurator 
+ the configurator. Unless you need more control I suggest deriving off of the 
+ SimpleBotCommandBase as that means you only have to override the execute method.
 
  This bot implements security based on a securelevel concept. An invokable module,  
  which is to say one that can be invoked by a user should offer the option to configure  
