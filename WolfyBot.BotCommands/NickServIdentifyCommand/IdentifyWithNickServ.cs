@@ -18,7 +18,7 @@ using WolfyBot.Core;
 
 namespace NickServIdentifyCommand
 {
-	public class IdentifyWithNickServ :IBotCommand
+	public class IdentifyWithNickServ : SimpleBotCommandBase
 	{
 		public IdentifyWithNickServ (String nickServName, String password)
 		{
@@ -35,45 +35,10 @@ namespace NickServIdentifyCommand
 
 		#region IBotCommand implementation
 
-		public event EventHandler<IRCMessage> ScriptMessage;
-
-		public void Execute (object sender, IRCMessage message)
+		public override void Execute (object sender, IRCMessage message)
 		{
 			var parameters = String.Format ("identify {0}", _password);
 			OnScriptMessage (IRCMessageFactory.BuildSendChannelMessage (_nickServName, parameters));
-		}
-
-		public void OnScriptMessage (IRCMessage e)
-		{
-			EventHandler<IRCMessage> handler = ScriptMessage;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
-
-		public List<string> CommandWords {
-			get;
-			set;
-		}
-
-		public List<string> ParameterWords {
-			get;
-			set;
-		}
-
-		public List<string> TrailingParameterWords {
-			get;
-			set;
-		}
-
-		public bool Interactive {
-			get;
-			set;
-		}
-
-		public SecureLevelEnum SecureLevel {
-			get;
-			set;
 		}
 
 		string _password;

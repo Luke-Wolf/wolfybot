@@ -22,7 +22,7 @@ namespace PipeCleanerCommand
 	/// This class is primarily for testing purposes to
 	/// act as a pipe cleaner for the botcontroller
 	/// </summary>
-	public class Pipecleaner : IBotCommand
+	public class Pipecleaner : SimpleBotCommandBase
 	{
 		public Pipecleaner (List<string> commandWords, List<string> parameterWords,
 		                    List<string> trailingParameters, bool interactive, SecureLevelEnum secureLevel)
@@ -36,44 +36,9 @@ namespace PipeCleanerCommand
 
 		#region IBotCommand implementation
 
-		public event EventHandler<IRCMessage> ScriptMessage;
-
-		public void Execute (object sender, IRCMessage message)
+		public override void Execute (object sender, IRCMessage message)
 		{
 			OnScriptMessage (IRCMessageFactory.BuildSendChannelMessage ("bot", "Pipe Cleaner Invoked"));
-		}
-
-		public void OnScriptMessage (IRCMessage e)
-		{
-			EventHandler<IRCMessage> handler = ScriptMessage;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
-
-		public List<string> CommandWords {
-			get;
-			set;
-		}
-
-		public List<string> ParameterWords {
-			get;
-			set;
-		}
-
-		public List<string> TrailingParameterWords {
-			get;
-			set;
-		}
-
-		public bool Interactive {
-			get;
-			set;
-		}
-
-		public SecureLevelEnum SecureLevel {
-			get;
-			set;
 		}
 
 		#endregion

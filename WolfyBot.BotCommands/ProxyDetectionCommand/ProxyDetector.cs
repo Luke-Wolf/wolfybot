@@ -21,7 +21,7 @@ using System.Net;
 
 namespace ProxyDetectionCommand
 {
-	public class ProxyDetector:IBotCommand
+	public class ProxyDetector: SimpleBotCommandBase
 	{
 		public ProxyDetector (int[] ports, string kickmessage = "")
 		{
@@ -37,9 +37,7 @@ namespace ProxyDetectionCommand
 
 		#region IBotCommand implementation
 
-		public event EventHandler<IRCMessage> ScriptMessage;
-
-		public void Execute (object sender, IRCMessage message)
+		public override void Execute (object sender, IRCMessage message)
 		{
 			var hostname = message.Host.Split ('@') [1];
 			var entry = Dns.GetHostEntry (hostname);
@@ -59,46 +57,13 @@ namespace ProxyDetectionCommand
 						client.Close ();
 						return true;
 
-					} catch (Exception ex) {
+					} catch (Exception) {
 						//intentionally empty, if the ports aren't open they're
 						//not behind a proxy
 					}
 				}
 			}
 			return false;
-		}
-
-		public void OnScriptMessage (IRCMessage e)
-		{
-			EventHandler<IRCMessage> handler = ScriptMessage;
-			if (handler != null) {
-				handler (this, e);
-			}
-		}
-
-		public List<string> CommandWords {
-			get;
-			set;
-		}
-
-		public List<string> ParameterWords {
-			get;
-			set;
-		}
-
-		public List<string> TrailingParameterWords {
-			get;
-			set;
-		}
-
-		public bool Interactive {
-			get;
-			set;
-		}
-
-		public SecureLevelEnum SecureLevel {
-			get;
-			set;
 		}
 
 		static int[] portsToScan;
