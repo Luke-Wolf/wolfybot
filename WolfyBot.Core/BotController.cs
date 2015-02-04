@@ -16,28 +16,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.Design;
 
 namespace WolfyBot.Core
 {
+	/// <summary>
+	/// <para>The Controller Class for the IRC Bot, Selects the commands that need to be executed based upon one
+	/// of three possibilities:</para>
+	/// <para>1). A command is just listening for an IRC command</para>
+	/// <para>2). A command is listening for a command and a parameter</para>
+	/// <para>3). A command is listening for a command and a trailing parameter (Most common)</para>
+	/// 
+	/// </summary>
 	public class BotController
 	{
-		public BotController (List<IBotCommand> commands, String botPassword)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="WolfyBot.Core.BotController"/> class.
+		/// </summary>
+		/// <param name="commands">A collection of bot commands for the controller to execute</param>
+		/// <param name="botPassword"> A Password for the bot to recognize the owner of the bot by, 
+		/// authenticate via a PRIVMSG directly to the bot</param>
+		public BotController (IEnumerable<IBotCommand> commands, String botPassword)
 		{
 			password = botPassword;
 			ownerNick = String.Empty;
 			if (commands.Count == 0) {
 				throw new NotSupportedException ();
 			}
-			_commands = commands;
+
+			_commands = new List<IBotCommand> (commands);
 			foreach (var item in _commands) {
 				item.ScriptMessage += new EventHandler<IRCMessage> (ScriptMessageHandler);
 			}
 		}
 
-
+		/// <summary>
+		/// Raises the message sent event. Subscribe to this to get messages from the IBotCommands
+		/// </summary>
 		protected virtual void OnMessageSent (IRCMessage e)
 		{
 			EventHandler<IRCMessage> handler = MessageSent;
@@ -46,6 +60,10 @@ namespace WolfyBot.Core
 			}
 		}
 
+		/// <summary>
+		/// Handler for receiving messages from an IRC Server connection, selects and passes IRCMessages down to
+		/// IBotCommands
+		/// </summary>
 		public void ReceiveMessageHandler (Object sender, IRCMessage e)
 		{
 			try {
@@ -96,6 +114,10 @@ namespace WolfyBot.Core
 			}
 		}
 
+		/// <summary>
+		/// Handler for Scripts to Attatch to, Hooks up to the OnMessageSent Handler
+		/// For Internal Usage Only
+		/// </summary>
 		public void ScriptMessageHandler (Object sender, IRCMessage e)
 		{
 			OnMessageSent (e);
@@ -103,15 +125,20 @@ namespace WolfyBot.Core
 
 		static bool CheckPermissions (IBotCommand command, IRCMessage message, IRCServer server)
 		{
+			//If SecureLevel is the Bot, then it's an "internal" command for the bot, such as
+			//ponging a server
 			if (command.SecureLevel == SecureLevelEnum.Bot)
 				return true;
+			//If the "Channel" is empty then it is a message from the server
 			if (message.Channel == String.Empty)
 				return true;
+
 			IRCChannel _channel = null;
 			foreach (var channel in server.Channels) {
-				if (channel.ChannelName == message.Channel)
+				if (channel.ChannelName == message.Channel) {
 					_channel = channel;
-				break;
+					break;
+				}
 			}
 
 			//should not happen
