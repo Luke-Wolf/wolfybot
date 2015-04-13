@@ -47,11 +47,6 @@ namespace WolfyBot.Config
 		/// <param name="configFileLocation">Config file location.</param>
 		void ReadConfig (String configFileLocation);
 
-		/// <summary>
-		/// Reads the config file at the given file.
-		/// </summary>
-		/// <param name="configFile">Config file.</param>
-		void ReadConfig (File configFile);
 
 		/// <summary>
 		/// <para>
@@ -68,13 +63,6 @@ namespace WolfyBot.Config
 		/// </para>
 		/// </summary>
 		void WriteConfig (String configFileLocation);
-
-		/// <summary>
-		/// <para>
-		/// Writes the current configuration of the module to the specified file
-		/// </para>
-		/// </summary>
-		void WriteConfig (File configFile);
 
 		/// <summary>
 		/// Sets the Config Module to it's default values
