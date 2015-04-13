@@ -108,8 +108,6 @@ namespace WolfyBot.Core
 				Muted = false;
 				return;
 			}
-
-
 		}
 
 		public IRCUser FindUser (String nick)
@@ -231,7 +229,7 @@ namespace WolfyBot.Core
 
 		#endregion
 
-		private List<IRCMessage> joinQueue;
+		List<IRCMessage> joinQueue;
 
 		public event EventHandler<IRCMessage> MessageReceived;
 	}

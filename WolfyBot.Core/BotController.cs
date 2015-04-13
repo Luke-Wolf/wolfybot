@@ -39,7 +39,7 @@ namespace WolfyBot.Core
 		{
 			password = botPassword;
 			ownerNick = String.Empty;
-			if (commands.Count == 0) {
+			if (commands.Count () == 0) {
 				throw new NotSupportedException ();
 			}
 
