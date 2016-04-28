@@ -34,20 +34,12 @@ namespace WolfyBot.Config
 
 		public static void ReadConfig ()
 		{
+			#region IRCServer
+			ServerConfig.ReadConfig ();
+			#endregion
 			if (File.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini")) {
 				var parser = new FileIniDataParser ();
 				IniData data = parser.ReadFile (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
-
-				#region IRCServer
-				Logging = Convert.ToBoolean (data ["ServerConfig"] ["Logging"]);
-				IRCServerHostName = data ["ServerConfig"] ["HostName"];
-				IRCServerPort = Convert.ToInt16 (data ["ServerConfig"] ["Port"]);
-				IRCSSLEnabled = Convert.ToBoolean (data ["ServerConfig"] ["SSL_Enabled"]);
-				IRCNick = data ["ServerConfig"] ["Nick"];
-				IRCPassword = data ["ServerConfig"] ["Password"];
-				IRCChannels = data ["ServerConfig"] ["Channels"];
-				DontLogChannels = data ["ServerConfig"] ["DontLog"].Split (' ');
-				#endregion
 
 				#region Bot
 				BotPassword = data ["BotConfig"] ["Password"];
@@ -89,12 +81,7 @@ namespace WolfyBot.Config
 
 		public static IRCServer BuildIRCServer ()
 		{
-			if (!configured) {
-				ReadConfig ();
-			}
-			var server = new IRCServer (IRCServerHostName, IRCServerPort, IRCChannels, IRCNick, IRCSSLEnabled, IRCPassword);
-			server.Logging = Logging;
-			return server;
+			return ServerConfig.BuildServer ();
 		}
 
 		public static void WireUp (BotController controller, IRCServer server)
@@ -106,14 +93,8 @@ namespace WolfyBot.Config
 		public static void WriteNewConfig ()
 		{
 			#region IrcServerConfig
-			Logging = true;
-			IRCServerHostName = "irc.freenode.net";
-			IRCServerPort = 6667;
-			IRCSSLEnabled = false;
-			IRCNick = "wolfybot";
-			IRCChannels = "#WolfyBot";
-			IRCPassword = String.Empty;
-			DontLogChannels = new String[0];
+			ServerConfig.ResetToDefaults ();
+			ServerConfig.WriteConfig ();
 			#endregion
 
 			#region BotConfig
@@ -142,22 +123,6 @@ namespace WolfyBot.Config
 			}
 
 			var data = new IniData ();
-
-			#region IRCServer
-			data.Sections.AddSection ("ServerConfig");
-			data ["ServerConfig"].AddKey ("Logging", Logging.ToString ());
-			data ["ServerConfig"].AddKey ("HostName", IRCServerHostName);
-			data ["ServerConfig"].AddKey ("Port", IRCServerPort.ToString ());
-			data ["ServerConfig"].AddKey ("SSL_Enabled", IRCSSLEnabled.ToString ());
-			data ["ServerConfig"].AddKey ("Nick", IRCNick);
-			data ["ServerConfig"].AddKey ("Password", IRCPassword);
-			data ["ServerConfig"].AddKey ("Channels", IRCChannels);
-			var dontLogString = String.Empty;
-			foreach (var item in DontLogChannels) {
-				String.Concat (item, " ", dontLogString);
-			}
-			data ["ServerConfig"].AddKey ("DontLog", dontLogString);
-			#endregion
 
 			#region Bot
 			data.Sections.AddSection ("BotConfig");
@@ -189,49 +154,11 @@ namespace WolfyBot.Config
 
 		#endregion
 
-		#region IRCServerConfiguration
-
-		public static bool Logging {
+		public static IRCServerConfigModule ServerConfig {
 			get;
 			set;
 		}
 
-		public static String[] DontLogChannels {
-			get;
-			set;
-		}
-
-		public static String IRCServerHostName {
-			get;
-			set;
-		}
-
-		public static int IRCServerPort {
-			get;
-			set;
-		}
-
-		public static String IRCNick {
-			get;
-			set;
-		}
-
-		public static String IRCChannels {
-			get;
-			set;
-		}
-
-		public static String IRCPassword {
-			get;
-			set;
-		}
-
-		public static bool IRCSSLEnabled {
-			get;
-			set;
-		}
-
-		#endregion
 
 		#region BotConfiguration
 

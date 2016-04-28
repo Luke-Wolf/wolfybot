@@ -13,15 +13,13 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 using System;
-using System.IO;
 using WolfyBot.Core;
+using System.IO;
 
 namespace WolfyBot.Config
 {
 	public abstract class ConfigModuleBase :IConfigModule
 	{
-		public abstract IBotCommand BuildCommand ();
-
 		public void ReadConfig ()
 		{
 			ReadConfig (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
@@ -31,6 +29,8 @@ namespace WolfyBot.Config
 
 		public void WriteConfig ()
 		{
+			if (!Directory.Exists (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot"))
+				Directory.CreateDirectory (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot");
 			WriteConfig (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData) + "/wolfybot/config.ini");
 		}
 

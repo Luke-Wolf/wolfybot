@@ -31,7 +31,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="INIFileParser">
-      <HintPath>..\packages\ini-parser.2.1.1\lib\INIFileParser.dll</HintPath>
+      <HintPath>..\packages\ini-parser.2.2.0\lib\net20\INIFileParser.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -39,12 +39,11 @@
     <Compile Include="Config.cs" />
     <Compile Include="IConfigModule.cs" />
     <Compile Include="ConfigModuleBase.cs" />
+    <Compile Include="IRCServerConfigModule.cs" />
+    <Compile Include="ICommandConfigModule.cs" />
+    <Compile Include="IServerConfigModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <None Include="LICENSE" />
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WolfyBot.Core\WolfyBot.Core.csproj">
       <Project>{DBEFEE3B-0172-4EAA-BA91-D4AC67A9AEB7}</Project>
@@ -54,5 +53,8 @@
       <Project>{BBBFBD73-CFEC-458D-AF7B-A3283B28000F}</Project>
       <Name>WolfyBot.BotCommands</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

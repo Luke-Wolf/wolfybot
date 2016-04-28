@@ -28,12 +28,6 @@ namespace WolfyBot.Config
 	public interface IConfigModule
 	{
 		/// <summary>
-		/// Builds the BotCommand for the Module being configured.
-		/// </summary>
-		/// <returns>The BotCommand.</returns>
-		IBotCommand BuildCommand ();
-
-		/// <summary>
 		/// <para>
 		/// Reads the default config file located at either .config/wolfybot/ or 
 		/// /username/appdata/wolfybot/

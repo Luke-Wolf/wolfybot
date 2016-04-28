@@ -52,16 +52,15 @@ namespace WolfyBot.Core
 		/// <param name="nick">Nickname of the bot</param>
 		/// <param name="ssl">If set to <c>true</c> ssl is enable for this connection.</param>
 		/// <param name="password">Password to connect to the IRC server.</param>
-		public IRCServer (String host, int port, String channels, String nick, bool ssl, String password = "")
+		public IRCServer (String host, int port, String[] channels, String nick, bool ssl, String password = "")
 		{
 			Host = host;
 			Port = port;
 			Nick = nick;
 			SSL = ssl;
 			Password = password;
-			var channelStringList = channels.Split (' ').ToList ();
 			Channels = new List<IRCChannel> ();
-			foreach (var item in channelStringList) {
+			foreach (var item in channels) {
 				var _channel = new IRCChannel (item);
 				Channels.Add (_channel);
 				MessageReceived += new EventHandler<IRCMessage> (_channel.HandleReceiveMessages);
